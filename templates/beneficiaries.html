@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Beneficiaries{% endblock %}
+{% block body_class %}page-app{% endblock %}
+{% block content %}
+<div class="app-layout">
+  {% include "_sidebar.html" %}
+  <div class="app-main">
+    <div class="page-header-row">
+      <div><h2 class="page-title">Saved Beneficiaries</h2><p class="page-sub">Manage your saved payees for faster transfers</p></div>
+      <a href="{{ url_for('add_beneficiary') }}" class="btn-quick-transfer">+ Add Beneficiary</a>
+    </div>
+    <div class="section-card">
+      {% if beneficiaries %}
+      <div class="bene-grid">
+        {% for b in beneficiaries %}
+        <div class="bene-card">
+          <div class="bene-avatar">{{ b.name[0] }}</div>
+          <div class="bene-info">
+            <div class="bene-name">{{ b.name }}</div>
+            {% if b.nickname %}<div class="bene-nick">"{{ b.nickname }}"</div>{% endif %}
+            <div class="bene-bank">{{ b.bank_name }}</div>
+            <div class="bene-acc mono">{{ b.account_no[:4] }}****{{ b.account_no[-4:] }}</div>
+            <div class="bene-ifsc mono">{{ b.ifsc }}</div>
+          </div>
+          <div class="bene-actions">
+            <a href="{{ url_for('transfer') }}" class="btn-bene-pay">Pay</a>
+            <a href="{{ url_for('delete_beneficiary', bid=b.id) }}" class="btn-bene-del" onclick="return confirm('Remove {{ b.name }}?')">✕</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state" style="padding:3rem">
+        <p>👥 No beneficiaries saved yet.</p>
+        <a href="{{ url_for('add_beneficiary') }}" class="btn-quick-transfer" style="margin-top:1rem;display:inline-flex">+ Add Your First Beneficiary</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

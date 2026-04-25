@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Add Beneficiary{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+{% block content %}
+<div style="max-width:520px;margin:3rem auto;padding:0 1.5rem">
+  <div class="auth-card">
+    <div class="auth-card-header"><h3>👥 Add New Beneficiary</h3><p>Save a payee for quick future transfers</p></div>
+    <form method="POST" style="padding:1.8rem 2rem 1rem">
+        {{ form.hidden_tag() }}
+      <div class="form-field"><label>Full Name</label><input type="text" name="name" class="form-input" placeholder="Beneficiary full name" required/></div>
+      <div class="form-field"><label>Bank Name</label><input type="text" name="bank_name" class="form-input" placeholder="e.g. HDFC Bank, SBI" required/></div>
+      <div class="form-row-2">
+        <div class="form-field"><label>Account Number</label><input type="text" name="acc_no" class="form-input" placeholder="12-digit account no." required/></div>
+        <div class="form-field"><label>IFSC Code</label><input type="text" name="ifsc" class="form-input" placeholder="e.g. HDFC0001234" required/></div>
+      </div>
+      <div class="form-field"><label>Nickname (optional)</label><input type="text" name="nickname" class="form-input" placeholder="e.g. Mom, Landlord"/></div>
+      <button type="submit" class="btn-submit btn-green">✓ Save Beneficiary</button>
+    </form>
+    <div class="auth-card-footer"><p><a href="{{ url_for('beneficiaries') }}" style="color:#1a73e8">← Back to Beneficiaries</a></p></div>
+  </div>
+</div>
+{% endblock %}

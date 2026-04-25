@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block body_class %}page-app{% endblock %}
+{% block content %}
+<div class="app-layout">
+  {% include '_sidebar.html' %}
+  <div class="app-main">
+    <div class="page-header-row"><div><h2 class="page-title">🔔 Notifications</h2><p class="page-sub">{{ notifs|length }} total notifications</p></div></div>
+    <div class="section-card">
+      {% if notifs %}
+      {% for n in notifs %}
+      <div class="notif-item notif-{{ n.notif_type }} {% if not n.is_read %}unread{% endif %}">
+        <div class="notif-dot"></div>
+        <div class="notif-body">
+          <div class="notif-title">{{ n.title }}</div>
+          <div class="notif-msg">{{ n.message }}</div>
+          <div class="notif-time">{{ n.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="empty-state" style="padding:3rem">🔔 No notifications yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

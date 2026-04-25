@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Open Account{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+
+  <!-- Left branding panel -->
+  <div class="auth-left">
+    <a href="{{ url_for('index') }}" class="auth-brand">
+      <span class="brand-hexagon lg">N</span>
+      <span class="brand-name lg">Nexa<strong>Bank</strong></span>
+    </a>
+    <h2 class="auth-left-title">Open Your Account</h2>
+    <p class="auth-left-sub">Join thousands of customers banking securely with NexaBank — free forever.</p>
+
+    <div class="auth-security-list">
+      <div class="sec-item"><span class="sec-dot blue"></span><span>Instant Account Number Generated</span></div>
+      <div class="sec-item"><span class="sec-dot blue"></span><span>₹50,000 Welcome Balance (Demo)</span></div>
+      <div class="sec-item"><span class="sec-dot blue"></span><span>Zero Minimum Balance</span></div>
+      <div class="sec-item"><span class="sec-dot blue"></span><span>NEFT · IMPS · UPI Transfers</span></div>
+    </div>
+
+    <div class="auth-concept-box" style="border-color:rgba(30,136,229,0.4);background:rgba(30,136,229,0.05)">
+      <p class="acb-label" style="color:#1e88e5">🛡️ IDENTITY SECURITY</p>
+      <p class="acb-text">Your password is <strong>hashed using pbkdf2:sha256</strong> before storage. The original password is <em>mathematically irrecoverable</em> from the database.</p>
+    </div>
+
+    <p class="auth-left-new">Already a customer? <a href="{{ url_for('login') }}">Login to NetBanking →</a></p>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <h3>Open Savings Account</h3>
+        <p>Takes less than 2 minutes</p>
+      </div>
+
+      <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-field">
+          <label>{{ form.full_name.label.text }}</label>
+          {{ form.full_name(class="form-input", placeholder="e.g. Arjun Sharma") }}
+          {% for e in form.full_name.errors %}<span class="form-err">{{ e }}</span>{% endfor %}
+        </div>
+
+        <div class="form-field">
+          <label>{{ form.email.label.text }}</label>
+          {{ form.email(class="form-input", placeholder="yourname@email.com", autocomplete="email") }}
+          {% for e in form.email.errors %}<span class="form-err">{{ e }}</span>{% endfor %}
+        </div>
+
+        <div class="form-field">
+          <label>{{ form.phone.label.text }}</label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">+91</span>
+            {{ form.phone(class="form-input has-prefix", placeholder="9876543210") }}
+          </div>
+          {% for e in form.phone.errors %}<span class="form-err">{{ e }}</span>{% endfor %}
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-field">
+            <label>{{ form.password.label.text }}</label>
+            <div class="input-eye-wrap">
+              {{ form.password(class="form-input", placeholder="Min 8 chars", id="sp1", autocomplete="new-password") }}
+              <button type="button" class="eye-toggle" onclick="toggleEye('sp1',this)">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="strength-wrap">
+              <div class="strength-fill" id="sfill"></div>
+            </div>
+            <span class="strength-text" id="stext"></span>
+            {% for e in form.password.errors %}<span class="form-err">{{ e }}</span>{% endfor %}
+          </div>
+          <div class="form-field">
+            <label>{{ form.confirm_password.label.text }}</label>
+            <div class="input-eye-wrap">
+              {{ form.confirm_password(class="form-input", placeholder="Repeat password", id="sp2") }}
+              <button type="button" class="eye-toggle" onclick="toggleEye('sp2',this)">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            {% for e in form.confirm_password.errors %}<span class="form-err">{{ e }}</span>{% endfor %}
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit btn-green">
+          Open My Account
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </form>
+
+      <div class="auth-card-footer">
+        <p>🔒 Your data is encrypted and never shared.</p>
+        <p>By opening an account you agree to our Terms & Privacy Policy.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

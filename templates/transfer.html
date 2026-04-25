@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Fund Transfer{% endblock %}
+{% block body_class %}page-app{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+
+  {% include '_sidebar.html' %}
+
+  <div class="app-main">
+    <div class="page-header-row">
+      <div>
+        <h2 class="page-title">Fund Transfer</h2>
+        <p class="page-sub">Available Balance: <strong style="color:#1a73e8">&#8377;{{ '{:,.2f}'.format(current_user.balance) }}</strong></p>
+      </div>
+    </div>
+
+    <div class="transfer-layout">
+
+      <div class="section-card transfer-card">
+        <div class="txn-type-tabs">
+          <button type="button" class="ttype-tab active" onclick="setType('neft',this)">&#127974; NEFT</button>
+          <button type="button" class="ttype-tab" onclick="setType('imps',this)">&#9889; IMPS</button>
+          <button type="button" class="ttype-tab" onclick="setType('upi',this)">&#128241; UPI</button>
+        </div>
+
+        <form method="POST" action="{{ url_for('transfer') }}" novalidate>
+            {{ form.hidden_tag() }}
+          <input type="hidden" name="txn_type" id="txnTypeInput" value="neft"/>
+
+          <div class="form-field">
+            <label>Beneficiary Name</label>
+            <input type="text" name="beneficiary" class="form-input" placeholder="Full name of recipient" required/>
+          </div>
+
+          <div class="form-field">
+            <label id="acc-label">Account Number</label>
+            <input type="text" name="acc_no" class="form-input" id="accField" placeholder="Enter 12-digit account number" required/>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-field">
+              <label>IFSC Code</label>
+              <input type="text" name="ifsc" class="form-input" id="ifscField" placeholder="e.g. HDFC0001234"/>
+            </div>
+            <div class="form-field">
+              <label>Amount (&#8377;)</label>
+              <input type="number" name="amount" class="form-input" id="amountField" placeholder="0.00" min="1" step="0.01" required oninput="updatePreview(this.value)"/>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Remarks (optional)</label>
+            <input type="text" name="remarks" class="form-input" placeholder="e.g. Rent Payment"/>
+          </div>
+
+          <div class="transfer-preview" id="txPreview" style="display:none">
+            <div class="tp-row"><span>Transfer Amount</span><strong id="tp-amt">&#8377;0.00</strong></div>
+            <div class="tp-row"><span>Transfer Type</span><strong id="tp-type">NEFT</strong></div>
+            <div class="tp-row"><span>Balance After Transfer</span><strong id="tp-bal">&#8212;</strong></div>
+          </div>
+
+          <button type="submit" class="btn-submit btn-transfer" onclick="return confirmTransfer()">
+            <svg viewBox="0 0 24 24" width="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Transfer Now
+          </button>
+        </form>
+      </div>
+
+      <div class="transfer-info">
+        <div class="ti-card">
+          <h4>Transfer Limits</h4>
+          <div class="ti-row"><span>NEFT</span><span>&#8377;10 &#8211; &#8377;10,00,000</span></div>
+          <div class="ti-row"><span>IMPS</span><span>&#8377;1 &#8211; &#8377;5,00,000</span></div>
+          <div class="ti-row"><span>UPI</span><span>&#8377;1 &#8211; &#8377;1,00,000</span></div>
+        </div>
+        <div class="ti-card">
+          <h4>Processing Time</h4>
+          <div class="ti-row"><span>NEFT</span><span>Same day (batch)</span></div>
+          <div class="ti-row"><span>IMPS</span><span>Instant 24x7</span></div>
+          <div class="ti-row"><span>UPI</span><span>Instant 24x7</span></div>
+        </div>
+        <div class="ti-card ti-security">
+          <p>&#128274; <strong>Secure Transfer</strong> - All transfers are processed over an encrypted connection.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const type = "{{ request.args.get('type', '') }}";
+    if (type) {
+      const btn = document.querySelector(`button[onclick*="('${type}'"]`);
+      if (btn) setType(type, btn);
+    }
+  });
+</script>
+{% endblock %}

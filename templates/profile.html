@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block body_class %}page-app{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  {% include "_sidebar.html" %}
+
+  <div class="app-main">
+    <h2 class="page-title">My Profile</h2>
+
+    <div class="profile-layout">
+
+      <!-- Profile card -->
+      <div class="section-card profile-hero-card">
+        <div class="profile-avatar-lg">{{ current_user.first_name[0] }}{{ current_user.full_name.split()[-1][0] if current_user.full_name.split()|length > 1 else '' }}</div>
+        <div class="profile-name">{{ current_user.full_name }}</div>
+        <div class="profile-role">{{ current_user.account_type }}</div>
+        <div class="profile-since">Member since {{ current_user.created_at.strftime('%B %Y') }}</div>
+        <div class="profile-status"><span class="status-dot"></span> Account Active</div>
+      </div>
+
+      <!-- Details card -->
+      <div class="section-card profile-details-card">
+        <h4 class="dc-section-title">Personal Information</h4>
+        <div class="profile-detail-rows">
+          <div class="pd-row">
+            <span class="pd-label">Full Name</span>
+            <span class="pd-val">{{ current_user.full_name }}</span>
+          </div>
+          <div class="pd-row">
+            <span class="pd-label">Email Address</span>
+            <span class="pd-val">{{ current_user.email }}</span>
+          </div>
+          <div class="pd-row">
+            <span class="pd-label">Mobile Number</span>
+            <span class="pd-val">+91 {{ current_user.phone }}</span>
+          </div>
+        </div>
+
+        <h4 class="dc-section-title" style="margin-top:1.5rem">Account Information</h4>
+        <div class="profile-detail-rows">
+          <div class="pd-row">
+            <span class="pd-label">Account Number</span>
+            <span class="pd-val mono">{{ current_user.masked_account }}</span>
+          </div>
+          <div class="pd-row">
+            <span class="pd-label">Account Type</span>
+            <span class="pd-val">{{ current_user.account_type }}</span>
+          </div>
+          <div class="pd-row">
+            <span class="pd-label">IFSC Code</span>
+            <span class="pd-val mono">{{ current_user.ifsc_code }}</span>
+          </div>
+          <div class="pd-row">
+            <span class="pd-label">Branch</span>
+            <span class="pd-val">{{ current_user.branch }}</span>
+          </div>
+          <div class="pd-row">
+            <span class="pd-label">Current Balance</span>
+            <span class="pd-val" style="color:#1a73e8;font-weight:700">₹{{ '{:,.2f}'.format(current_user.balance) }}</span>
+          </div>
+        </div>
+
+        <h4 class="dc-section-title" style="margin-top:1.5rem">Security Information</h4>
+        <div class="profile-detail-rows">
+          <div class="pd-row">
+            <span class="pd-label">Password Storage</span>
+            <span class="pd-val"><span class="badge-green">scrypt Hash</span></span>
+          </div>
+          <div class="pd-row">
+            <span class="pd-label">Last Login</span>
+            <span class="pd-val">{{ current_user.last_login.strftime('%d %b %Y, %I:%M %p') if current_user.last_login else 'First session' }}</span>
+          </div>
+          <div class="pd-row">
+            <span class="pd-label">Session</span>
+            <span class="pd-val"><span class="badge-green">Active & Secure</span></span>
+          </div>
+        </div>
+      </div>
+
+    <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="{{ url_for('change_password') }}" class="btn-change-pw">🔐 Change Password</a>
+          <a href="{{ url_for('security_log') }}" class="btn-change-pw" style="background:#fff3e0;color:#e65100;border-color:#e65100">🛡️ Security Log</a>
+          <a href="{{ url_for('notifications') }}" class="btn-change-pw" style="background:#e8f5e9;color:#1e8449;border-color:#1e8449">🔔 Notifications</a>
+        </div>
+      </div>
+    </div><!-- /profile-layout -->
+  </div>
+</div>
+{% endblock %}

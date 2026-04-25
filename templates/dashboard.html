@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block body_class %}page-app{% endblock %}
+{% block content %}
+<div class="app-layout">
+  {% include '_sidebar.html' %}
+
+  <div class="app-main">
+    <div class="dash-greeting-row">
+      <div>
+        <h2 class="dash-welcome">Good {{ 'morning' if now_hour<12 else ('afternoon' if now_hour<17 else 'evening') }}, {{ current_user.first_name }} 👋</h2>
+        <p class="dash-date">{{ now.strftime('%A, %d %B %Y') }}</p>
+      </div>
+      <a href="{{ url_for('transfer') }}" class="btn-quick-transfer"><svg viewBox="0 0 24 24" width="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Quick Transfer</a>
+    </div>
+
+    <!-- Balance + info + quick actions -->
+    <div class="cards-row">
+      <div class="dash-card balance-card">
+        <div class="dc-label">Available Balance</div>
+        <div class="dc-balance">₹<span id="balance-val">{{ '{:,.2f}'.format(current_user.balance) }}</span></div>
+        <div class="dc-acc">A/C: {{ current_user.masked_account }}</div>
+        <button class="btn-show-hide" onclick="toggleBalance()">Show / Hide</button>
+        <div class="balance-card-bg">₹</div>
+      </div>
+      <div class="dash-card info-card">
+        <div class="dc-label">Account Details</div>
+        <div class="info-rows">
+          <div class="info-row"><span>Type</span><strong>{{ current_user.account_type }}</strong></div>
+          <div class="info-row"><span>Account No.</span><strong>{{ current_user.masked_account }}</strong></div>
+          <div class="info-row"><span>IFSC</span><strong>{{ current_user.ifsc_code }}</strong></div>
+          <div class="info-row"><span>Status</span><strong class="status-active">● Active</strong></div>
+        </div>
+      </div>
+      <div class="dash-card quick-card">
+        <div class="dc-label">Quick Actions</div>
+        <div class="quick-grid">
+          <a href="{{ url_for('transfer') }}?type=upi"   class="quick-btn"><span>📱</span>UPI</a>
+          <a href="{{ url_for('transfer') }}?type=neft"  class="quick-btn"><span>🏦</span>NEFT</a>
+          <a href="{{ url_for('open_fd') }}"             class="quick-btn"><span>🏛️</span>Open FD</a>
+          <a href="{{ url_for('download_statement') }}"  class="quick-btn"><span>⬇️</span>Statement</a>
+          <a href="{{ url_for('beneficiaries') }}"       class="quick-btn"><span>👥</span>Payees</a>
+          <a href="{{ url_for('new_ticket') }}"          class="quick-btn"><span>💬</span>Support</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FD summary if any -->
+    {% if fds %}
+    <div class="section-card" style="margin-bottom:1.5rem">
+      <div class="section-card-header">
+        <h3>Active Fixed Deposits</h3>
+        <a href="{{ url_for('fixed_deposits') }}" class="link-see-all">View All →</a>
+      </div>
+      <div style="padding:.5rem 0">
+        {% for fd in fds %}
+        <div class="fd-row">
+          <div class="fd-icon">🏛️</div>
+          <div class="fd-info">
+            <div class="fd-no">{{ fd.fd_number }}</div>
+            <div class="fd-meta">{{ fd.tenure_months }} months @ {{ fd.interest_rate }}% p.a.</div>
+          </div>
+          <div class="fd-amounts">
+            <div class="fd-principal">₹{{ '{:,.2f}'.format(fd.principal) }}</div>
+            <div class="fd-maturity">Matures: ₹{{ '{:,.2f}'.format(fd.maturity_amt) }}</div>
+          </div>
+          <div class="fd-days"><span class="fd-days-num">{{ fd.days_remaining }}</span><span class="fd-days-label">days left</span></div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Spending breakdown -->
+    {% if spend_data %}
+    <div class="section-card" style="margin-bottom:1.5rem">
+      <div class="section-card-header"><h3>Spending Breakdown</h3></div>
+      <div class="spend-chart-wrap">
+        {% set total_spend = spend_data.values()|sum %}
+        {% for type, amt in spend_data.items() %}
+        {% set pct = ((amt / total_spend) * 100)|round(1) if total_spend > 0 else 0 %}
+        <div class="spend-row">
+          <span class="spend-label">{{ {'upi':'UPI Payments','neft':'NEFT Transfer','atm':'ATM Withdrawal','imps':'IMPS Transfer','fd':'Fixed Deposit'}.get(type, type.upper()) }}</span>
+          <div class="spend-bar-wrap"><div class="spend-bar" data-width="{{ pct }}"></div></div>
+          <span class="spend-amt">₹{{ '{:,.0f}'.format(amt) }}</span>
+          <span class="spend-pct">{{ pct }}%</span>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- Script to set width dynamically to avoid VS Code CSS Linter errors -->
+      <script>
+        document.querySelectorAll('.spend-bar').forEach(function(bar) {
+          if(bar.getAttribute('data-width')) {
+            bar.style.width = bar.getAttribute('data-width') + '%';
+          }
+        });
+      </script>
+    </div>
+    {% endif %}
+
+    <!-- Recent Transactions -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <h3>Recent Transactions</h3>
+        <div style="display:flex;gap:.8rem;align-items:center">
+          <a href="{{ url_for('download_statement') }}" class="link-see-all">⬇ Download</a>
+          <a href="{{ url_for('transactions') }}" class="link-see-all">View All →</a>
+        </div>
+      </div>
+      {% if txns %}
+      <div class="txn-list">
+        {% for t in txns %}
+        <div class="txn-row">
+          <div class="txn-icon-wrap {{ t.direction }}">{{ t.txn_icon }}</div>
+          <div class="txn-desc">
+            <div class="txn-title">{{ t.description }}</div>
+            <div class="txn-meta">{{ t.reference }} · {{ t.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+          </div>
+          <div class="txn-amount {{ t.direction }}">{{ '+' if t.direction=='credit' else '−' }}₹{{ '{:,.2f}'.format(t.amount) }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}<p class="empty-state">No transactions yet.</p>{% endif %}
+    </div>
+
+    <div class="security-banner">
+      <span class="sb-icon">🔒</span>
+      <div><strong>Secure Session</strong> — Authenticated via Flask-Login with OTP 2FA. Session expires after 15 minutes idle. Last login: {{ current_user.last_login.strftime('%d %b %Y, %I:%M %p') if current_user.last_login else 'First login today' }}.</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

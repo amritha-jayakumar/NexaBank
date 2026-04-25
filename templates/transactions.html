@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Transactions{% endblock %}
+{% block body_class %}page-app{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  {% include '_sidebar.html' %}
+
+  <div class="app-main">
+
+    <div class="page-header-row">
+      <div>
+        <h2 class="page-title">Transaction History</h2>
+        <p class="page-sub">Account: {{ current_user.masked_account }} &nbsp;|&nbsp; Balance: ₹{{ '{:,.2f}'.format(current_user.balance) }}</p>
+      </div>
+      <div class="txn-filter-row">
+        <select class="filter-select" id="dirFilter" onchange="filterTxns()">
+          <option value="">All Transactions</option>
+          <option value="credit">Credits Only</option>
+          <option value="debit">Debits Only</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Statement table -->
+    <div class="section-card">
+      <div class="statement-table-wrap">
+        <table class="statement-table">
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>Reference No.</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Debit (₹)</th>
+              <th>Credit (₹)</th>
+              <th>Balance (₹)</th>
+            </tr>
+          </thead>
+          <tbody id="txnBody">
+            {% if txns.items %}
+              {% for t in txns.items %}
+              <tr class="txn-tr {{ t.direction }}">
+                <td class="td-date">
+                  {{ t.created_at.strftime('%d %b %Y') }}<br/>
+                  <span class="td-time">{{ t.created_at.strftime('%I:%M %p') }}</span>
+                </td>
+                <td class="td-ref mono">{{ t.reference }}</td>
+                <td class="td-desc">
+                  <span class="txn-ico">{{ t.txn_icon }}</span>
+                  {{ t.description }}
+                </td>
+                <td><span class="txn-type-badge txn-type-{{ t.txn_type }}">{{ t.txn_type.upper() }}</span></td>
+                <td class="td-debit">{% if t.direction=='debit' %}{{ '{:,.2f}'.format(t.amount) }}{% else %}—{% endif %}</td>
+                <td class="td-credit">{% if t.direction=='credit' %}{{ '{:,.2f}'.format(t.amount) }}{% else %}—{% endif %}</td>
+                <td class="td-bal">{{ '{:,.2f}'.format(t.balance_after) }}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td colspan="7" class="empty-state">No transactions found.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      {% if txns.pages > 1 %}
+      <div class="pagination-row">
+        {% if txns.has_prev %}
+          <a href="{{ url_for('transactions', page=txns.prev_num) }}" class="page-btn">← Prev</a>
+        {% endif %}
+        <span class="page-info">Page {{ txns.page }} of {{ txns.pages }}</span>
+        {% if txns.has_next %}
+          <a href="{{ url_for('transactions', page=txns.next_num) }}" class="page-btn">Next →</a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

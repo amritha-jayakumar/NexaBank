@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel{% endblock %}
+{% block body_class %}page-app{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include '_sidebar.html' %}
+  
+  <div class="app-main">
+    <div class="page-header-row">
+      <div>
+        <h2 class="page-title">🛡️ Admin Dashboard</h2>
+        <p class="page-sub">System-wide monitoring and access control</p>
+      </div>
+    </div>
+    
+    <div class="section-card" style="margin-bottom:2rem">
+      <div class="section-card-header">
+        <h3>Registered Users</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td>#{{ u.id }}</td>
+              <td>{{ u.full_name }}</td>
+              <td>{{ u.email }}</td>
+              <td>
+                {% if u.role == 'admin' %}
+                  <span class="status-badge status-green">Admin</span>
+                {% else %}
+                  <span class="status-badge status-blue">Customer</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if u.is_locked %}
+                  <span class="status-badge status-amber">Locked</span>
+                {% else %}
+                  <span class="status-badge status-green">Active</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="section-card">
+      <div class="section-card-header">
+        <h3>Recent Global Transactions</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Txn ID</th>
+              <th>User ID</th>
+              <th>Type</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in txns %}
+            <tr>
+              <td>{{ t.reference }}</td>
+              <td>#{{ t.user_id }}</td>
+              <td>{{ t.txn_type|upper }}</td>
+              <td><strong class="{% if t.direction == 'credit' %}text-green{% endif %}">
+                {% if t.direction == 'credit' %}+{% else %}-{% endif %}₹{{ '{:,.2f}'.format(t.amount) }}
+              </strong></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">No transactions found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+  </div>
+</div>
+{% endblock %}

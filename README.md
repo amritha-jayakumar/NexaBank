@@ -1,30 +1,8 @@
-<div align="center">
-  <img src="https://img.shields.io/badge/Status-Work_In_Progress-orange?style=for-the-badge&logo=git&logoColor=white" alt="Work In Progress" />
-</div>
+# 🏦 NexaBank — Identity Security Framework
+### PRJN26-158 | Cyber Security, Ethical Hacking & Digital Forensics
 
-<br>
-
-<div align="center">
-  <h1>🏦 NexaBank — Identity Security Framework</h1>
-  <p><strong>PRJN26-158 | Cyber Security, Ethical Hacking & Digital Forensics</strong></p>
-  <p>A secure, full-featured banking website built with Python, Flask-Login & SQLite to demonstrate identity and transaction security.</p>
-</div>
-
-<div align="center">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask" />
-  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
-  <br>
-  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License: MIT" />
-</div>
-
----
-
-## 🚧 Project Status: Under Progress
-
-> **Note:** This project is currently under active development. Certain features may be incomplete, and the visual structure is subject to change as the system matures.
+A full banking website built with Python, Flask-Login & SQLite.
+Inspired by HDFC Bank / Federal Bank NetBanking portals.
 
 ---
 
@@ -63,45 +41,51 @@ NexaBank/
 ## 🚀 SETUP — Step by Step (VS Code)
 
 ### Step 1 — Open in VS Code
-Open your `NexaBank` folder in Visual Studio Code.
+```
+File → Open Folder → select the NexaBank folder
+```
 
-### Step 2 — Open Terminal
-Press `` Ctrl + ` `` or go to `Terminal → New Terminal`.
+### Step 2 — Open Terminal in VS Code
+```
+Terminal → New Terminal   (or press Ctrl + ` )
+```
 
-### Step 3 — Create Virtual Environment
+### Step 3 — Create virtual environment
 ```bash
 python -m venv venv
 ```
 
-### Step 4 — Activate Virtual Environment
-**Windows:**
+### Step 4 — Activate virtual environment
 ```bash
+# Windows:
 venv\Scripts\activate
-```
-**Mac / Linux:**
-```bash
+
+# Mac / Linux:
 source venv/bin/activate
 ```
-*(You should see `(venv)` in your terminal prompt.)*
+You should see `(venv)` in your terminal prompt.
 
-### Step 5 — Install Dependencies
+### Step 5 — Install all packages
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 6 — Run the App
+### Step 6 — Run the app
 ```bash
 python app.py
 ```
-You will see output similar to:
+
+You will see:
 ```
 ✅  NexaBank database ready.
 🌐  Open http://127.0.0.1:5000
  * Running on http://127.0.0.1:5000
 ```
 
-### Step 7 — View in Browser
-Open `http://127.0.0.1:5000` in any web browser.
+### Step 7 — Open in browser
+```
+http://127.0.0.1:5000
+```
 
 ---
 
@@ -109,14 +93,14 @@ Open `http://127.0.0.1:5000` in any web browser.
 
 | URL              | Page              | Access      |
 |------------------|-------------------|-------------|
-| `/`              | Landing Page      | Public      |
-| `/signup`        | Open Account      | Public      |
-| `/login`         | NetBanking Login  | Public      |
-| `/dashboard`     | Account Dashboard | 🔒 Login req |
-| `/transactions`  | Statement History | 🔒 Login req |
-| `/transfer`      | Fund Transfer     | 🔒 Login req |
-| `/profile`       | My Profile        | 🔒 Login req |
-| `/logout`        | Logout            | 🔒 Login req |
+| /                | Landing Page      | Public      |
+| /signup          | Open Account      | Public      |
+| /login           | NetBanking Login  | Public      |
+| /dashboard       | Account Dashboard | 🔒 Login req |
+| /transactions    | Statement History | 🔒 Login req |
+| /transfer        | Fund Transfer     | 🔒 Login req |
+| /profile         | My Profile        | 🔒 Login req |
+| /logout          | Logout            | 🔒 Login req |
 
 ---
 
@@ -138,12 +122,12 @@ Open `http://127.0.0.1:5000` in any web browser.
 
 ## 🔒 Security Features
 
-1. **Password Hashing** — Stored securely as `pbkdf2:sha256` hash.
-2. **CSRF Tokens** — Every form operates seamlessly with hidden CSRF tokens via Flask-WTF.
-3. **Route Protection** — `@login_required` rigidly redirects unauthorized users to the login screen.
-4. **Session Cookie** — Cryptographically signed with `SECRET_KEY`; tampering is automatically detected.
-5. **Input Validation** — All input is effectively validated server-side before it touches the database.
-6. **Email Deduplication** — Duplicate accounts are blocked at registration.
+1. **Password Hashing** — Stored as `pbkdf2:sha256` hash. Completely irrecoverable.
+2. **CSRF Tokens** — Every form has a hidden CSRF token via Flask-WTF.
+3. **Route Protection** — `@login_required` redirects unauthorized users to login.
+4. **Session Cookie** — Signed with SECRET_KEY; tampering is automatically detected.
+5. **Input Validation** — All inputs validated server-side before touching the database.
+6. **Email Deduplication** — Duplicate accounts blocked at registration.
 
 ---
 
@@ -153,12 +137,6 @@ Open `http://127.0.0.1:5000` in any web browser.
 |----------------------------|-----------------------------------------------|
 | `ModuleNotFoundError`      | Run `pip install -r requirements.txt`         |
 | `OperationalError`         | Delete `instance/nexabank.db`, restart app    |
-| Port 5000 already in use   | Add `app.run(port=5001)` in `app.py`          |
+| Port 5000 already in use   | Add `app.run(port=5001)` in app.py            |
 | Form won't submit (CSRF)   | Make sure `form.hidden_tag()` is in template  |
 | White page / no styles     | Check `static/css/style.css` path is correct  |
-
-<br>
-
-<div align="center">
-  <p>Crafted with 🛡️ Security and ❤️ for Learning.</p>
-</div>

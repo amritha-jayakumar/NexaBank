@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+
+{% block content %}
+<div style="max-width:400px;margin:5rem auto;padding:0 1.5rem">
+  <div class="auth-card">
+    <div class="auth-card-header">
+      <h3>🔐 Identity Verification</h3>
+      <p>Please enter the 6-digit OTP sent to you.</p>
+      {% if remaining_time is defined %}
+      <p style="margin-top:0.5rem; font-size:0.9rem; color:#ef4444; font-weight:600;">
+        OTP expires in: <span id="otp-timer-display" style="font-family:'JetBrains Mono', monospace;">00:00</span>
+      </p>
+      {% endif %}
+    </div>
+    
+    <form method="POST" style="padding:1.8rem 2rem 2rem">
+      {{ form.hidden_tag() }}
+      
+      <div class="form-field">
+        <label>Secure OTP</label>
+        {{ form.otp(class="form-input", placeholder="Enter 6-digit code", autofocus="autofocus", autocomplete="off") }}
+        {% for error in form.otp.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+      </div>
+      
+      {{ form.submit(class="btn-submit btn-primary", style="margin-top:1rem") }}
+    </form>
+    
+    <div class="auth-card-footer">
+      <p>Never share your OTP with anyone.</p>
+    </div>
+  </div>
+</div>
+
+{% if remaining_time is defined %}
+<script>
+  let otpTimeLeft = {{ remaining_time }};
+  const otpTimeDisplay = document.getElementById('otp-timer-display');
+  
+  function updateOtpTimer() {
+    if(otpTimeLeft <= 0) {
+      window.location.href = "{{ cancel_url }}";
+      return;
+    }
+    let m = Math.floor(otpTimeLeft / 60);
+    let s = otpTimeLeft % 60;
+    if(otpTimeDisplay) {
+      otpTimeDisplay.textContent = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+    }
+    otpTimeLeft--;
+  }
+  
+  setInterval(updateOtpTimer, 1000);
+  updateOtpTimer();
+</script>
+{% endif %}
+{% endblock %}

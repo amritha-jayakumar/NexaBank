@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Fixed Deposits{% endblock %}
+{% block body_class %}page-app{% endblock %}
+{% block content %}
+<div class="app-layout">
+  {% include "_sidebar.html" %}
+
+  <div class="app-main">
+
+    <div class="page-header-row">
+      <div>
+        <h2 class="page-title">Fixed Deposits</h2>
+        <p class="page-sub">Grow your savings with guaranteed returns up to 8.25% p.a.</p>
+      </div>
+      <a href="{{ url_for('open_fd') }}" class="btn-quick-transfer">+ Open New FD</a>
+    </div>
+
+    <!-- Interest Rate Cards -->
+    <div class="section-card" style="margin-bottom:1.5rem">
+      <div class="section-card-header">
+        <h3>Current Interest Rates</h3>
+        <span style="font-size:.78rem;color:var(--text-3)">Rates effective from 01 Jan 2025</span>
+      </div>
+      <div class="fd-rates-grid">
+        {% set rate_info = [
+          (3,  6.50, '3 Months',  ''),
+          (6,  7.00, '6 Months',  ''),
+          (12, 7.50, '1 Year',    'Most Popular'),
+          (24, 8.00, '2 Years',   ''),
+          (36, 8.25, '3 Years',   'Best Rate'),
+        ] %}
+        {% for months, rate, label, tag in rate_info %}
+        <div class="fd-rate-tile {% if tag %}featured{% endif %}">
+          {% if tag %}<div class="fd-rate-tag">{{ tag }}</div>{% endif %}
+          <div class="fd-rate-tenure">{{ label }}</div>
+          <div class="fd-rate-pct">{{ rate }}<span>%</span></div>
+          <div class="fd-rate-pa">per annum</div>
+          <div class="fd-rate-ex">
+            ₹1L → ₹{{ '{:,.0f}'.format(100000 * (1 + (rate/100) * (months/12))) }}
+          </div>
+          <a href="{{ url_for('open_fd') }}" class="fd-rate-btn">Invest Now</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Your FDs -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <h3>Your Fixed Deposits</h3>
+        <span style="font-size:.78rem;color:var(--text-3)">{{ fds|length }} active deposit(s)</span>
+      </div>
+
+      {% if fds %}
+      <div class="statement-table-wrap">
+        <table class="statement-table">
+          <thead>
+            <tr>
+              <th>FD Number</th>
+              <th>Principal Amount</th>
+              <th>Interest Rate</th>
+              <th>Tenure</th>
+              <th>Maturity Amount</th>
+              <th>Start Date</th>
+              <th>Maturity Date</th>
+              <th>Days Remaining</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for fd in fds %}
+            <tr>
+              <td><span class="mono" style="font-weight:600;color:var(--navy)">{{ fd.fd_number }}</span></td>
+              <td><span class="mono" style="font-weight:600">₹{{ '{:,.2f}'.format(fd.principal) }}</span></td>
+              <td><span style="color:var(--green);font-weight:700;font-family:'JetBrains Mono',monospace">{{ fd.interest_rate }}% p.a.</span></td>
+              <td>{{ fd.tenure_months }} months</td>
+              <td><span class="mono" style="font-weight:700;color:var(--blue)">₹{{ '{:,.2f}'.format(fd.maturity_amt) }}</span></td>
+              <td class="td-date">{{ fd.start_date.strftime('%d %b %Y') }}</td>
+              <td class="td-date">{{ fd.maturity_date.strftime('%d %b %Y') }}</td>
+              <td>
+                <div class="fd-progress-wrap">
+                  {% set total_days = fd.tenure_months * 30 %}
+                  {% set elapsed = total_days - fd.days_remaining %}
+                  {% set pct = ((elapsed / total_days) * 100)|round(0)|int if total_days > 0 else 0 %}
+                  <div class="fd-progress-bar"><div class="fd-progress-fill" style="width:{{ pct }}%"></div></div>
+                  <span class="fd-days-left">{{ fd.days_remaining }} days left</span>
+                </div>
+              </td>
+              <td><span class="fd-status-badge active">● Active</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="fd-empty-state">
+        <div class="fd-empty-icon">🏛️</div>
+        <h4>No Fixed Deposits Yet</h4>
+        <p>Start earning guaranteed returns. Open your first Fixed Deposit in seconds.</p>
+        <a href="{{ url_for('open_fd') }}" class="btn-quick-transfer" style="margin-top:1rem;display:inline-flex">+ Open Your First FD</a>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Info Banner -->
+    <div class="fd-info-banner">
+      <div class="fib-item">
+        <span class="fib-icon">🔒</span>
+        <div><strong>100% Safe</strong><p>DICGC insured up to ₹5 Lakhs</p></div>
+      </div>
+      <div class="fib-item">
+        <span class="fib-icon">📈</span>
+        <div><strong>Guaranteed Returns</strong><p>Fixed rate — no market risk</p></div>
+      </div>
+      <div class="fib-item">
+        <span class="fib-icon">⚡</span>
+        <div><strong>Instant Opening</strong><p>Open FD directly from your account</p></div>
+      </div>
+      <div class="fib-item">
+        <span class="fib-icon">🗓️</span>
+        <div><strong>Flexible Tenures</strong><p>3 months to 36 months</p></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

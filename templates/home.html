@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% block title %}Welcome to NexaBank{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+
+<!-- ═══ NAVBAR ═══ -->
+<nav class="home-nav">
+  <div class="home-nav-inner">
+    <a href="{{ url_for('index') }}" class="home-nav-brand">
+      <span class="brand-hexagon">N</span>
+      <span class="brand-name">Nexa<strong>Bank</strong></span>
+    </a>
+    <div class="home-nav-links">
+      <a href="#features">Features</a>
+      <a href="#why">Why NexaBank</a>
+      <a href="#security">Security</a>
+      <a href="#rates">FD Rates</a>
+    </div>
+    <div class="home-nav-actions">
+      <a href="{{ url_for('login') }}"  class="nav-btn-outline">Login</a>
+      <a href="{{ url_for('signup') }}" class="nav-btn-solid">Open Account</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero-section">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-tag"><span class="tag-dot"></span> Trusted by 10 Lakh+ Customers</div>
+      <h1 class="hero-h1">
+        India's Most<br/>
+        <span class="hero-gradient">Secure</span> Digital<br/>
+        Banking Platform
+      </h1>
+      <p class="hero-desc">
+        Open your NexaBank account in 2 minutes. Zero balance, zero paperwork.
+        NEFT · IMPS · UPI · Fixed Deposits — all in one secure place.
+      </p>
+      <div class="hero-btns">
+        <a href="{{ url_for('signup') }}" class="btn-hero-cta">
+          Open Free Account
+          <svg viewBox="0 0 24 24" width="18"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="{{ url_for('login') }}" class="btn-hero-ghost">Login to NetBanking</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-num">₹2.4L Cr</div><div class="hstat-label">Total Deposits</div></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><div class="hstat-num">10 Lakh+</div><div class="hstat-label">Happy Customers</div></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><div class="hstat-num">99.9%</div><div class="hstat-label">Uptime</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <!-- Phone mockup with card -->
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <div class="ps-header">
+            <span class="ps-bank">NexaBank</span>
+            <span class="ps-time">NetBanking</span>
+          </div>
+          <div class="ps-balance-label">Available Balance</div>
+          <div class="ps-balance">₹1,24,500.00</div>
+          <div class="ps-acc">A/C: xxxx xxxx 7890</div>
+          <div class="ps-actions">
+            <div class="ps-act"><div class="ps-act-icon">📱</div><div class="ps-act-label">UPI</div></div>
+            <div class="ps-act"><div class="ps-act-icon">🏦</div><div class="ps-act-label">NEFT</div></div>
+            <div class="ps-act"><div class="ps-act-icon">⚡</div><div class="ps-act-label">IMPS</div></div>
+            <div class="ps-act"><div class="ps-act-icon">🏛️</div><div class="ps-act-label">FD</div></div>
+          </div>
+          <div class="ps-txn-title">Recent Transactions</div>
+          <div class="ps-txn"><span>💰 Salary Credit</span><span class="ps-cr">+₹45,000</span></div>
+          <div class="ps-txn"><span>📱 UPI — Swiggy</span><span class="ps-dr">-₹452</span></div>
+          <div class="ps-txn"><span>🏦 NEFT — Rent</span><span class="ps-dr">-₹12,000</span></div>
+        </div>
+        <div class="phone-notch"></div>
+      </div>
+      <!-- Floating badges -->
+      <div class="hero-float f1"><span>🔒</span><div><b>Bank-Grade Security</b><small>256-bit SSL</small></div></div>
+      <div class="hero-float f2"><span>✅</span><div><b>RBI Licensed</b><small>PRJN26-158</small></div></div>
+      <div class="hero-float f3"><span>⚡</span><div><b>Instant Transfer</b><small>24×7 Available</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRUST STRIP ═══ -->
+<div class="trust-strip">
+  <div class="trust-inner">
+    <div class="trust-item"><span>🏅</span> RBI Regulated Bank</div>
+    <div class="trust-div"></div>
+    <div class="trust-item"><span>🔒</span> 256-bit SSL Encryption</div>
+    <div class="trust-div"></div>
+    <div class="trust-item"><span>📱</span> OTP 2-Factor Auth</div>
+    <div class="trust-div"></div>
+    <div class="trust-item"><span>🛡️</span> DICGC Insured Deposits</div>
+    <div class="trust-div"></div>
+    <div class="trust-item"><span>⏰</span> 24×7 Customer Support</div>
+  </div>
+</div>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="home-section" id="features">
+  <div class="hs-inner">
+    <div class="hs-tag">FEATURES</div>
+    <h2 class="hs-title">Everything You Need to Bank Smarter</h2>
+    <p class="hs-sub">From instant transfers to fixed deposits — all features in one secure platform.</p>
+    <div class="feat-grid">
+      <div class="feat-tile">
+        <div class="ft-icon" style="background:#e3f2fd;color:#1565c0">⚡</div>
+        <h3>Instant Transfers</h3>
+        <p>Send money via NEFT, IMPS, or UPI to any bank account in India — 24×7, 365 days.</p>
+      </div>
+      <div class="feat-tile">
+        <div class="ft-icon" style="background:#e8f5e9;color:#1b5e20">🏛️</div>
+        <h3>Fixed Deposits</h3>
+        <p>Earn up to 8.25% p.a. on Fixed Deposits. Open in seconds, track maturity online.</p>
+      </div>
+      <div class="feat-tile">
+        <div class="ft-icon" style="background:#fff3e0;color:#e65100">👥</div>
+        <h3>Saved Beneficiaries</h3>
+        <p>Save frequent payees and transfer money with a single click. No re-entering details.</p>
+      </div>
+      <div class="feat-tile">
+        <div class="ft-icon" style="background:#fce4ec;color:#880e4f">📊</div>
+        <h3>Spending Analytics</h3>
+        <p>Visual breakdown of your spending by category. Understand where your money goes.</p>
+      </div>
+      <div class="feat-tile">
+        <div class="ft-icon" style="background:#f3e5f5;color:#6a1b9a">🔔</div>
+        <h3>Smart Notifications</h3>
+        <p>Real-time alerts for every transaction, login, and account activity.</p>
+      </div>
+      <div class="feat-tile">
+        <div class="ft-icon" style="background:#e0f7fa;color:#006064">📄</div>
+        <h3>Account Statement</h3>
+        <p>Download your account statement anytime. Filter by date, credit or debit.</p>
+      </div>
+      <div class="feat-tile">
+        <div class="ft-icon" style="background:#f1f8e9;color:#33691e">💬</div>
+        <h3>24×7 Support</h3>
+        <p>Raise support tickets directly from your dashboard. Track resolution status.</p>
+      </div>
+      <div class="feat-tile">
+        <div class="ft-icon" style="background:#ede7f6;color:#311b92">🔐</div>
+        <h3>OTP Authentication</h3>
+        <p>Two-factor authentication on every login. Your account stays safe always.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="howit-section" id="why">
+  <div class="hs-inner">
+    <div class="hs-tag">HOW IT WORKS</div>
+    <h2 class="hs-title">Start Banking in 3 Simple Steps</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-circle">01</div>
+        <h4>Register Online</h4>
+        <p>Fill your name, email and mobile number. Takes less than 2 minutes.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-circle">02</div>
+        <h4>Verify with OTP</h4>
+        <p>Enter the 6-digit OTP sent to your phone. Your identity is verified securely.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-circle">03</div>
+        <h4>Start Banking</h4>
+        <p>Transfer money, open FDs, download statements — everything online.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="{{ url_for('signup') }}" class="btn-hero-cta">Get Started Free →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECURITY SECTION ═══ -->
+<section class="home-section bg-navy-sec" id="security">
+  <div class="hs-inner">
+    <div class="hs-tag" style="color:#60aaff;border-color:#60aaff">SECURITY</div>
+    <h2 class="hs-title" style="color:#fff">Your Money. Your Data. Always Protected.</h2>
+    <div class="sec-grid">
+      <div class="sec-tile"><div class="sec-tile-icon">🔒</div><h4>pbkdf2:sha256 Password Hashing</h4><p>Your password is never stored. Only a one-way cryptographic hash is kept in the database.</p></div>
+      <div class="sec-tile"><div class="sec-tile-icon">🛡️</div><h4>Account Lockout</h4><p>5 wrong password attempts locks your account for 15 minutes — preventing brute force attacks.</p></div>
+      <div class="sec-tile"><div class="sec-tile-icon">📱</div><h4>OTP 2-Factor Auth</h4><p>Every login requires a one-time password — even if someone has your password, they cannot enter.</p></div>
+      <div class="sec-tile"><div class="sec-tile-icon">⏱️</div><h4>Session Timeout</h4><p>Sessions automatically expire after 15 minutes of inactivity, keeping your account safe.</p></div>
+      <div class="sec-tile"><div class="sec-tile-icon">📋</div><h4>Full Audit Log</h4><p>Every login attempt — success or failure — is recorded with IP address and timestamp.</p></div>
+      <div class="sec-tile"><div class="sec-tile-icon">🌐</div><h4>Security Headers</h4><p>XSS protection, clickjacking prevention, and MIME sniffing blocks on every page response.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FD RATES ═══ -->
+<section class="home-section" id="rates">
+  <div class="hs-inner">
+    <div class="hs-tag">FIXED DEPOSIT RATES</div>
+    <h2 class="hs-title">Grow Your Savings Faster</h2>
+    <p class="hs-sub">Guaranteed returns on your Fixed Deposits — open in seconds from your dashboard.</p>
+    <div class="rate-table-wrap">
+      <table class="rate-table">
+        <thead><tr><th>Tenure</th><th>Interest Rate (p.a.)</th><th>₹1 Lakh Becomes</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>3 Months</td><td class="rate-val">6.50%</td><td>₹1,01,625</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
+          <tr><td>6 Months</td><td class="rate-val">7.00%</td><td>₹1,03,500</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
+          <tr class="rate-highlight"><td>12 Months ⭐</td><td class="rate-val">7.50%</td><td>₹1,07,500</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
+          <tr><td>24 Months</td><td class="rate-val">8.00%</td><td>₹1,16,000</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
+          <tr><td>36 Months</td><td class="rate-val">8.25%</td><td>₹1,24,750</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA BANNER ═══ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>Ready to Experience Smarter Banking?</h2>
+    <p>Join thousands of customers banking securely with NexaBank. Open your account in 2 minutes — free forever.</p>
+    <div class="cta-btns">
+      <a href="{{ url_for('signup') }}" class="btn-hero-cta">Open Free Account →</a>
+      <a href="{{ url_for('login') }}"  class="btn-hero-ghost" style="border-color:rgba(255,255,255,0.4);color:#fff">Already a Customer? Login</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="home-footer">
+  <div class="hf-inner">
+    <div class="hf-brand">
+      <span class="brand-hexagon">N</span>
+      <span class="brand-name" style="font-size:1.1rem">Nexa<strong>Bank</strong></span>
+      <p style="font-size:.8rem;color:rgba(255,255,255,0.4);margin-top:.5rem;max-width:220px">India's trusted digital banking platform. Secure, fast, always available.</p>
+    </div>
+    <div class="hf-col"><h5>Banking</h5><a href="{{ url_for('signup') }}">Open Account</a><a href="{{ url_for('login') }}">NetBanking Login</a><a href="#">Mobile Banking</a></div>
+    <div class="hf-col"><h5>Products</h5><a href="#">Savings Account</a><a href="#">Fixed Deposits</a><a href="#">UPI Payments</a></div>
+    <div class="hf-col"><h5>Security</h5><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Report Fraud</a></div>
+    <div class="hf-col"><h5>Contact</h5><a href="#">1800-XXX-XXXX (Toll Free)</a><a href="#">support@nexabank.in</a><a href="#">Find Branch</a></div>
+  </div>
+  <div class="hf-bottom">
+    <span>© 2025 NexaBank Ltd. All rights reserved.</span>
+    <span>PRJN26-158 · Cyber Security & Digital Forensics Project</span>
+    <span>Member of Deposit Insurance Scheme</span>
+  </div>
+</footer>
+
+{% endblock %}

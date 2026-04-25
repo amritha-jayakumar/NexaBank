@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Security Log{% endblock %}
+{% block body_class %}page-app{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include "_sidebar.html" %}
+
+  <div class="app-main">
+    <div class="page-header-row">
+      <div>
+        <h2 class="page-title">&#128737; Security Log</h2>
+        <p class="page-sub">All login activity for your account — {{ current_user.email }}</p>
+      </div>
+    </div>
+
+    <!-- Security status cards -->
+    <div class="sec-status-grid">
+      <div class="sec-stat-card green">
+        <div class="ssc-icon">&#128274;</div>
+        <div class="ssc-label">Password Storage</div>
+        <div class="ssc-val">pbkdf2:sha256</div>
+      </div>
+      <div class="sec-stat-card blue">
+        <div class="ssc-icon">&#128241;</div>
+        <div class="ssc-label">2FA Status</div>
+        <div class="ssc-val">OTP Active</div>
+      </div>
+      <div class="sec-stat-card {% if current_user.is_locked %}red{% else %}green{% endif %}">
+        <div class="ssc-icon">{% if current_user.is_locked %}&#128272;{% else %}&#9989;{% endif %}</div>
+        <div class="ssc-label">Account Status</div>
+        <div class="ssc-val">{% if current_user.is_locked %}Locked{% else %}Active{% endif %}</div>
+      </div>
+      <div class="sec-stat-card {% if current_user.failed_attempts > 0 %}amber{% else %}green{% endif %}">
+        <div class="ssc-icon">&#9888;</div>
+        <div class="ssc-label">Failed Attempts</div>
+        <div class="ssc-val">{{ current_user.failed_attempts }} / 5</div>
+      </div>
+    </div>
+
+    <!-- Attempts table -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <h3>Login Activity (Last 20 Events)</h3>
+      </div>
+      <div class="statement-table-wrap">
+        <table class="statement-table">
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>Status</th>
+              <th>IP Address</th>
+              <th>Event</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if attempts %}
+              {% for a in attempts %}
+              <tr>
+                <td class="td-date">
+                  {{ a.created_at.strftime('%d %b %Y') }}<br/>
+                  <span class="td-time">{{ a.created_at.strftime('%I:%M:%S %p') }}</span>
+                </td>
+                <td>
+                  <span class="attempt-badge {% if a.success %}badge-success{% else %}badge-fail{% endif %}">
+                    {% if a.success %}&#10003; Success{% else %}&#10005; Failed{% endif %}
+                  </span>
+                </td>
+                <td class="mono" style="font-size:.8rem">{{ a.ip_address }}</td>
+                <td style="font-size:.85rem">{{ a.status_label }}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td colspan="4" class="empty-state">No login activity recorded yet.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Security tips -->
+    <div class="section-card" style="padding:1.5rem">
+      <h3 style="font-size:.95rem;margin-bottom:1rem">&#128161; Security Tips</h3>
+      <ul class="sec-tips">
+        <li>&#128274; Never share your password or OTP with anyone — including NexaBank staff.</li>
+        <li>&#128241; Always log out after using NetBanking on a shared device.</li>
+        <li>&#9888; Your account locks after 5 failed password attempts for 15 minutes.</li>
+        <li>&#128100; Sessions automatically expire after 15 minutes of inactivity.</li>
+        <li>&#128683; If you see unfamiliar login activity above, change your password immediately.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

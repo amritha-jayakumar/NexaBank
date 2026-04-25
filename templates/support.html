@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Support{% endblock %}
+{% block body_class %}page-app{% endblock %}
+{% block content %}
+<div class="app-layout">
+  {% include "_sidebar.html" %}
+  <div class="app-main">
+    <div class="page-header-row">
+      <div><h2 class="page-title">💬 Support Center</h2><p class="page-sub">Raise and track your support requests</p></div>
+      <a href="{{ url_for('new_ticket') }}" class="btn-quick-transfer">+ New Ticket</a>
+    </div>
+    <div class="section-card">
+      {% if tickets %}
+      <div class="statement-table-wrap">
+        <table class="statement-table">
+          <thead><tr><th>Ticket No.</th><th>Subject</th><th>Category</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            {% for t in tickets %}
+            <tr>
+              <td class="mono">{{ t.ticket_no }}</td>
+              <td>{{ t.subject }}</td>
+              <td><span class="txn-type-badge txn-type-upi">{{ t.category.upper() }}</span></td>
+              <td><span class="attempt-badge badge-{{ 'success' if t.status=='resolved' else 'fail' if t.status=='open' else 'success' }}">{{ t.status.upper() }}</span></td>
+              <td class="td-date">{{ t.created_at.strftime('%d %b %Y') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state" style="padding:3rem">💬 No support tickets raised yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

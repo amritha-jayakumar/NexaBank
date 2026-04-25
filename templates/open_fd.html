@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Open Fixed Deposit{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+{% block content %}
+<div style="max-width:560px;margin:3rem auto;padding:0 1.5rem">
+  <div class="auth-card">
+    <div class="auth-card-header" style="background:linear-gradient(135deg,#1e8449,#145a32)">
+      <h3>🏛️ Open Fixed Deposit</h3>
+      <p>Secure your savings with guaranteed high returns</p>
+    </div>
+    <form method="POST" style="padding:1.8rem 2rem 1rem">
+        {{ form.hidden_tag() }}
+
+      <div class="form-field">
+        <label>Deposit Amount (₹)</label>
+        <input type="number" name="principal" id="fd_principal"
+               class="form-input" placeholder="Minimum ₹1,000"
+               min="1000" step="100" required oninput="calcFD()"/>
+        <span style="font-size:.75rem;color:var(--text-3);margin-top:.3rem;display:block">
+          Available Balance: <strong style="color:var(--blue)">₹{{ '{:,.2f}'.format(current_user.balance) }}</strong>
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label>Select Tenure</label>
+        <div class="fd-tenure-grid">
+          {% set options = [(3,'3 Months','6.50%'),(6,'6 Months','7.00%'),(12,'1 Year','7.50%','popular'),(24,'2 Years','8.00%'),(36,'3 Years','8.25%','best')] %}
+          {% for item in options %}
+          {% set months = item[0] %}{% set label = item[1] %}{% set rate = item[2] %}{% set badge = item[3] if item|length > 3 else '' %}
+          <label class="tenure-option {% if months==12 %}selected{% endif %}">
+            <input type="radio" name="tenure" value="{{ months }}" {% if months==12 %}checked{% endif %} onchange="calcFD()"/>
+            {% if badge %}<span class="tenure-badge">{{ 'Popular' if badge=='popular' else 'Best Rate' }}</span>{% endif %}
+            <div class="tenure-months">{{ label }}</div>
+            <div class="tenure-rate">{{ rate }} p.a.</div>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Live Calculator -->
+      <div class="fd-calc-box" id="fdCalc">
+        <div class="fd-calc-title">📊 Returns Calculator</div>
+        <div class="fd-calc-rows">
+          <div class="fd-calc-row"><span>Principal Amount</span><strong id="calc_principal">—</strong></div>
+          <div class="fd-calc-row"><span>Tenure</span><strong id="calc_tenure">1 Year</strong></div>
+          <div class="fd-calc-row"><span>Interest Rate</span><strong id="calc_rate">7.50% p.a.</strong></div>
+          <div class="fd-calc-row highlight"><span>Interest Earned</span><strong id="calc_interest" style="color:var(--green)">—</strong></div>
+          <div class="fd-calc-row highlight"><span>Maturity Amount</span><strong id="calc_maturity" style="color:var(--blue);font-size:1rem">—</strong></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit btn-green" onclick="return confirmFD()">
+        🏛️ Confirm &amp; Open Fixed Deposit
+      </button>
+    </form>
+    <div class="auth-card-footer">
+      <p>🔒 FD amount will be debited from your savings account immediately.</p>
+      <p style="margin-top:.3rem"><a href="{{ url_for('fixed_deposits') }}" style="color:var(--blue)">← Back to Fixed Deposits</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const rateMap = { 3:6.5, 6:7.0, 12:7.5, 24:8.0, 36:8.25 };
+const tenureLabels = { 3:'3 Months', 6:'6 Months', 12:'1 Year', 24:'2 Years', 36:'3 Years' };
+
+function calcFD() {
+  const p = parseFloat(document.getElementById('fd_principal').value) || 0;
+  const sel = document.querySelector('input[name=tenure]:checked');
+  const t = sel ? parseInt(sel.value) : 12;
+  const r = rateMap[t] || 7.5;
+
+  document.getElementById('calc_tenure').textContent = tenureLabels[t] || t + ' months';
+  document.getElementById('calc_rate').textContent   = r + '% p.a.';
+
+  if (p >= 1000) {
+    const mat      = Math.round(p * (1 + (r/100) * (t/12)) * 100) / 100;
+    const interest = Math.round((mat - p) * 100) / 100;
+    document.getElementById('calc_principal').textContent = '₹' + p.toLocaleString('en-IN', {minimumFractionDigits:2});
+    document.getElementById('calc_interest').textContent  = '+₹' + interest.toLocaleString('en-IN', {minimumFractionDigits:2});
+    document.getElementById('calc_maturity').textContent  = '₹' + mat.toLocaleString('en-IN', {minimumFractionDigits:2});
+  } else {
+    document.getElementById('calc_principal').textContent = '—';
+    document.getElementById('calc_interest').textContent  = '—';
+    document.getElementById('calc_maturity').textContent  = '—';
+  }
+}
+
+// Tenure option selection highlight
+document.querySelectorAll('.tenure-option').forEach(function(label) {
+  label.addEventListener('click', function() {
+    document.querySelectorAll('.tenure-option').forEach(l => l.classList.remove('selected'));
+    this.classList.add('selected');
+    setTimeout(calcFD, 10);
+  });
+});
+
+function confirmFD() {
+  const p   = parseFloat(document.getElementById('fd_principal').value) || 0;
+  const sel = document.querySelector('input[name=tenure]:checked');
+  const t   = sel ? parseInt(sel.value) : 12;
+  const r   = rateMap[t] || 7.5;
+  const mat = Math.round(p * (1 + (r/100) * (t/12)) * 100) / 100;
+  if (p < 1000) { alert('Minimum deposit is ₹1,000.'); return false; }
+  return confirm(`Confirm FD of ₹${p.toLocaleString('en-IN')} for ${tenureLabels[t]} at ${r}% p.a.?\nMaturity Amount: ₹${mat.toLocaleString('en-IN', {minimumFractionDigits:2})}`);
+}
+
+calcFD();
+</script>
+{% endblock %}

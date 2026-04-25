@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}New Support Ticket{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+{% block content %}
+<div style="max-width:540px;margin:3rem auto;padding:0 1.5rem">
+  <div class="auth-card">
+    <div class="auth-card-header"><h3>💬 Raise Support Ticket</h3><p>Our team will respond within 24 hours</p></div>
+    <form method="POST" style="padding:1.8rem 2rem 1rem">
+        {{ form.hidden_tag() }}
+      <div class="form-field">
+        <label>Category</label>
+        <select name="category" class="form-input filter-select" style="width:100%">
+          <option value="general">General Query</option>
+          <option value="transaction">Transaction Issue</option>
+          <option value="account">Account Problem</option>
+          <option value="card">Card Issue</option>
+          <option value="fraud">Fraud / Unauthorized Access</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Subject</label><input type="text" name="subject" class="form-input" placeholder="Brief description of your issue" required/></div>
+      <div class="form-field"><label>Message</label><textarea name="message" class="form-input" rows="5" placeholder="Describe your issue in detail..." required style="resize:vertical"></textarea></div>
+      <button type="submit" class="btn-submit">📨 Submit Ticket</button>
+    </form>
+    <div class="auth-card-footer"><p><a href="{{ url_for('support') }}" style="color:#1a73e8">← Back to Support</a></p></div>
+  </div>
+</div>
+{% endblock %}

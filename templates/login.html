@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+
+  <!-- Left branding panel -->
+  <div class="auth-left">
+    <a href="{{ url_for('index') }}" class="auth-brand">
+      <span class="brand-hexagon lg">N</span>
+      <span class="brand-name lg">Nexa<strong>Bank</strong></span>
+    </a>
+    <h2 class="auth-left-title">NetBanking Portal</h2>
+    <p class="auth-left-sub">Your complete digital banking experience — securely at your fingertips.</p>
+
+    <div class="auth-security-list">
+      <div class="sec-item">
+        <span class="sec-dot green"></span>
+        <span>256-bit SSL Encryption Active</span>
+      </div>
+      <div class="sec-item">
+        <span class="sec-dot green"></span>
+        <span>Session-based Authentication</span>
+      </div>
+      <div class="sec-item">
+        <span class="sec-dot green"></span>
+        <span>CSRF Token Protection Enabled</span>
+      </div>
+      <div class="sec-item">
+        <span class="sec-dot green"></span>
+        <span>Hashed Password Storage</span>
+      </div>
+    </div>
+
+    <div class="auth-concept-box">
+      <p class="acb-label">🔐 AUTHENTICATION</p>
+      <p class="acb-text"><strong>Who you are</strong> — Your email + password prove your identity. The system checks your hashed credentials in the database.</p>
+    </div>
+
+    <p class="auth-left-new">New to NexaBank? <a href="{{ url_for('signup') }}">Open a free account →</a></p>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <h3>Login to NetBanking</h3>
+        <p>Enter your registered credentials</p>
+      </div>
+
+      <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-field">
+          <label>{{ form.email.label.text }}</label>
+          {{ form.email(class="form-input", placeholder="yourname@email.com", autocomplete="email") }}
+          {% for e in form.email.errors %}<span class="form-err">{{ e }}</span>{% endfor %}
+        </div>
+
+        <div class="form-field">
+          <label style="display:flex;justify-content:space-between">
+            {{ form.password.label.text }}
+            <a href="#" class="link-subtle">Forgot Password?</a>
+          </label>
+          <div class="input-eye-wrap">
+            {{ form.password(class="form-input", placeholder="••••••••", id="lp", autocomplete="current-password") }}
+            <button type="button" class="eye-toggle" onclick="toggleEye('lp',this)">
+              <svg id="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          {% for e in form.password.errors %}<span class="form-err">{{ e }}</span>{% endfor %}
+        </div>
+
+        <div class="form-check-row">
+          {{ form.remember(id="rem") }}
+          <label for="rem">{{ form.remember.label.text }}</label>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          Login Securely
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </form>
+
+      <div class="auth-card-footer">
+        <p>🔒 Your connection to this site is secure</p>
+        <p>Do not share your login credentials with anyone.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
