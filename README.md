@@ -1,13 +1,14 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Status-Work_In_Progress-orange?style=for-the-badge&logo=git&logoColor=white" alt="Work In Progress" />
+  <img src="https://img.shields.io/badge/Status-Completed-success?style=for-the-badge&logo=git&logoColor=white" alt="Completed" />
 </div>
 
 <br>
 
 <div align="center">
-  <h1>🏦 NexaBank — Identity Security Framework</h1>
+  <h1>NexaBank — Identity Security Framework</h1>
   <p><strong>PRJN26-158 | Cyber Security, Ethical Hacking & Digital Forensics</strong></p>
-  <p>A secure, full-featured banking website built with Python, Flask-Login & SQLite to demonstrate identity and transaction security.</p>
+  <p>Status: Completed</p>
+  <p>A successfully developed and implemented secure, full-featured banking system designed to demonstrate robust identity and transaction security.</p>
 </div>
 
 <div align="center">
@@ -22,13 +23,60 @@
 
 ---
 
-## 🚧 Project Status: Under Progress
+## Project Overview
 
-> **Note:** This project is currently under active development. Certain features may be incomplete, and the visual structure is subject to change as the system matures.
+NexaBank is a fully developed and functional banking web application. The primary purpose of this project is to implement a secure banking system with a strong emphasis on identity security. It serves as a comprehensive framework demonstrating secure authentication, authorization, and safe financial transaction processing.
 
 ---
 
-## 📁 Complete File Structure
+## Features Implemented
+
+- Two-Factor Authentication (Password + OTP)
+- Secure password hashing (bcrypt/scrypt via Werkzeug)
+- CSRF protection
+- Account lockout for brute-force prevention
+- Audit logging (IP, timestamp, login status)
+- Banking features (fund transfer, beneficiary management, fixed deposits)
+
+---
+
+## Technologies Used
+
+- Flask
+- SQLite
+- HTML/CSS
+- Python
+
+---
+
+## Security Features
+
+1. **Password Hashing**: Passwords are mathematically transformed and stored securely, ensuring they cannot be easily retrieved if the database is compromised.
+2. **CSRF Protection**: Prevents malicious sites from executing unwanted actions on behalf of the authenticated user.
+3. **Route Protection**: Ensures that only authenticated users can access sensitive pages, strictly enforcing access control.
+4. **Session Management**: User sessions are securely managed and cryptographically signed to prevent tampering.
+5. **Input Validation**: All user inputs are rigorously checked on the server side to prevent injection attacks and ensure data integrity.
+6. **Account Lockout**: The system temporarily disables accounts after multiple failed login attempts to thwart brute-force password guessing attacks.
+
+---
+
+## Project Completion Note
+
+This project has been successfully completed as part of an academic submission. It fulfills all specified requirements for demonstrating a functional and secure identity management framework within a simulated banking environment.
+
+---
+
+## Future Enhancements
+
+While the core objectives have been met, future iterations of this project could explore the following areas:
+
+- **Deployment**: Transitioning the application from a local development environment to a secure cloud hosting platform (e.g., AWS, Heroku, or PythonAnywhere).
+- **Advanced Monitoring**: Integrating comprehensive application performance monitoring and intrusion detection systems to proactively identify and respond to threats.
+- **Scalability Improvements**: Migrating from SQLite to a more robust, scalable database system like PostgreSQL or MySQL to handle increased data volume and concurrent users.
+
+---
+
+## Complete File Structure
 
 ```text
 NexaBank/
@@ -60,7 +108,7 @@ NexaBank/
 
 ---
 
-## 🚀 SETUP — Step by Step (VS Code)
+## SETUP — Step by Step (VS Code)
 
 ### Step 1 — Open in VS Code
 Open your `NexaBank` folder in Visual Studio Code.
@@ -95,8 +143,8 @@ python app.py
 ```
 You will see output similar to:
 ```
-✅  NexaBank database ready.
-🌐  Open http://127.0.0.1:5000
+  NexaBank database ready.
+  Open http://127.0.0.1:5000
  * Running on http://127.0.0.1:5000
 ```
 
@@ -105,22 +153,22 @@ Open `http://127.0.0.1:5000` in any web browser.
 
 ---
 
-## 🌐 Pages & Routes
+## Pages & Routes
 
 | URL              | Page              | Access      |
 |------------------|-------------------|-------------|
 | `/`              | Landing Page      | Public      |
 | `/signup`        | Open Account      | Public      |
 | `/login`         | NetBanking Login  | Public      |
-| `/dashboard`     | Account Dashboard | 🔒 Login req |
-| `/transactions`  | Statement History | 🔒 Login req |
-| `/transfer`      | Fund Transfer     | 🔒 Login req |
-| `/profile`       | My Profile        | 🔒 Login req |
-| `/logout`        | Logout            | 🔒 Login req |
+| `/dashboard`     | Account Dashboard | Login req   |
+| `/transactions`  | Statement History | Login req   |
+| `/transfer`      | Fund Transfer     | Login req   |
+| `/profile`       | My Profile        | Login req   |
+| `/logout`        | Logout            | Login req   |
 
 ---
 
-## 🎓 Cybersecurity Concepts in Code
+## Cybersecurity Concepts in Code
 
 | Concept               | Where                                  |
 |-----------------------|----------------------------------------|
@@ -136,18 +184,7 @@ Open `http://127.0.0.1:5000` in any web browser.
 
 ---
 
-## 🔒 Security Features
-
-1. **Password Hashing** — Stored securely as `pbkdf2:sha256` hash.
-2. **CSRF Tokens** — Every form operates seamlessly with hidden CSRF tokens via Flask-WTF.
-3. **Route Protection** — `@login_required` rigidly redirects unauthorized users to the login screen.
-4. **Session Cookie** — Cryptographically signed with `SECRET_KEY`; tampering is automatically detected.
-5. **Input Validation** — All input is effectively validated server-side before it touches the database.
-6. **Email Deduplication** — Duplicate accounts are blocked at registration.
-
----
-
-## 🛠 Troubleshooting
+## Troubleshooting
 
 | Problem                    | Solution                                      |
 |----------------------------|-----------------------------------------------|
@@ -160,5 +197,5 @@ Open `http://127.0.0.1:5000` in any web browser.
 <br>
 
 <div align="center">
-  <p>Crafted with 🛡️ Security and ❤️ for Learning.</p>
+  <p>Crafted with Security and for Learning.</p>
 </div>
