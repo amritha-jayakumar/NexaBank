@@ -6,8 +6,6 @@
 
 <div align="center">
   <h1>NexaBank — Identity Security Framework</h1>
-  <p><strong>PRJN26-158 | Cyber Security, Ethical Hacking & Digital Forensics</strong></p>
-  <p>Status: Completed</p>
   <p>A successfully developed and implemented secure, full-featured banking system designed to demonstrate robust identity and transaction security.</p>
 </div>
 
