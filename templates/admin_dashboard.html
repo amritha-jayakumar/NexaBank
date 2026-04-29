@@ -1,28 +1,67 @@
 {% extends "base.html" %}
-{% block title %}Admin Panel{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 {% block body_class %}page-app{% endblock %}
 
 {% block content %}
 <div class="app-layout">
-  {% include '_sidebar.html' %}
-  
+  {% include '_admin_sidebar.html' %}
+
   <div class="app-main">
-    <div class="page-header-row">
+    <!-- Header -->
+    <div class="dash-greeting-row">
       <div>
-        <h2 class="page-title">🛡️ Admin Dashboard</h2>
-        <p class="page-sub">System-wide monitoring and access control</p>
+        <h2 class="dash-welcome">🛡️ Admin Control Panel</h2>
+        <p class="dash-date">System-wide monitoring and access control</p>
+      </div>
+      <a href="{{ url_for('admin.admin_users') }}"
+         style="display:flex;align-items:center;gap:.5rem;padding:.6rem 1.2rem;background:var(--blue);color:#fff;border-radius:8px;font-size:.85rem;font-weight:600">
+        👥 Manage Users
+      </a>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="admin-stats-bar">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon asc-blue">👥</div>
+        <div>
+          <div class="admin-stat-val">{{ stats.total }}</div>
+          <div class="admin-stat-label">Total Users</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon asc-green">✅</div>
+        <div>
+          <div class="admin-stat-val">{{ stats.active }}</div>
+          <div class="admin-stat-label">Active Users</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon asc-red">🚫</div>
+        <div>
+          <div class="admin-stat-val">{{ stats.blocked }}</div>
+          <div class="admin-stat-label">Blocked Users</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon asc-amber">📋</div>
+        <div>
+          <div class="admin-stat-val">{{ logs|length }}</div>
+          <div class="admin-stat-label">Audit Logs</div>
+        </div>
       </div>
     </div>
-    
-    <div class="section-card" style="margin-bottom:2rem">
+
+    <!-- Registered Users -->
+    <div class="section-card" style="margin-bottom:1.5rem">
       <div class="section-card-header">
         <h3>Registered Users</h3>
+        <a href="{{ url_for('admin.admin_users') }}" class="link-see-all">View All & Manage →</a>
       </div>
-      <div class="table-responsive">
-        <table class="table">
+      <div class="statement-table-wrap">
+        <table class="statement-table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>#</th>
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
@@ -31,22 +70,33 @@
           </thead>
           <tbody>
             {% for u in users %}
-            <tr>
-              <td>#{{ u.id }}</td>
-              <td>{{ u.full_name }}</td>
-              <td>{{ u.email }}</td>
+            <tr class="admin-user-row">
+              <td style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-3)">#{{ u.id }}</td>
               <td>
-                {% if u.role == 'admin' %}
-                  <span class="status-badge status-green">Admin</span>
+                <div class="user-name-cell">
+                  <div class="user-mini-avatar {% if u.role == 'super_admin' %}super-av{% elif u.role == 'admin' %}admin-av{% endif %}">
+                    {{ u.first_name[0] }}{{ u.full_name.split()[-1][0] if u.full_name.split()|length > 1 else '' }}
+                  </div>
+                  <span class="user-full-name">{{ u.full_name }}</span>
+                </div>
+              </td>
+              <td style="font-size:.84rem;color:var(--text-2)">{{ u.email }}</td>
+              <td>
+                {% if u.role == 'super_admin' %}
+                  <span class="status-badge status-purple">⚡ Super Admin</span>
+                {% elif u.role == 'admin' %}
+                  <span class="status-badge status-red">🛡️ Admin</span>
                 {% else %}
-                  <span class="status-badge status-blue">Customer</span>
+                  <span class="status-badge status-blue">👤 Customer</span>
                 {% endif %}
               </td>
               <td>
-                {% if u.is_locked %}
-                  <span class="status-badge status-amber">Locked</span>
+                {% if not u.is_active_acc %}
+                  <span class="status-badge status-red">🚫 Blocked</span>
+                {% elif u.is_locked %}
+                  <span class="status-badge status-amber">🔒 Locked</span>
                 {% else %}
-                  <span class="status-badge status-green">Active</span>
+                  <span class="status-badge status-green">● Active</span>
                 {% endif %}
               </td>
             </tr>
@@ -55,39 +105,81 @@
         </table>
       </div>
     </div>
-    
-    <div class="section-card">
+
+    <!-- Audit Logs -->
+    <div class="section-card" style="margin-bottom:1.5rem">
       <div class="section-card-header">
-        <h3>Recent Global Transactions</h3>
+        <h3>📋 System Audit Logs</h3>
       </div>
-      <div class="table-responsive">
-        <table class="table">
+      <div class="statement-table-wrap">
+        <table class="statement-table">
           <thead>
             <tr>
-              <th>Txn ID</th>
+              <th>Date & Time</th>
+              <th>Admin ID</th>
+              <th>Action</th>
+              <th>Details</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in logs %}
+            <tr>
+              <td style="font-size:.8rem">{{ log.created_at.strftime('%d %b %Y %H:%M') }}</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-3)">#{{ log.admin_id }}</td>
+              <td><span class="status-badge status-purple">{{ log.action }}</span></td>
+              <td style="font-size:.83rem;color:var(--text-2)">{{ log.details }}</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--text-3)">{{ log.ip_address }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="empty-state">No audit logs yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Global Transactions -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <h3>💳 Recent Global Transactions</h3>
+      </div>
+      <div class="statement-table-wrap">
+        <table class="statement-table">
+          <thead>
+            <tr>
+              <th>Reference</th>
               <th>User ID</th>
               <th>Type</th>
               <th>Amount</th>
+              <th>Direction</th>
             </tr>
           </thead>
           <tbody>
             {% for t in txns %}
             <tr>
-              <td>{{ t.reference }}</td>
-              <td>#{{ t.user_id }}</td>
-              <td>{{ t.txn_type|upper }}</td>
-              <td><strong class="{% if t.direction == 'credit' %}text-green{% endif %}">
-                {% if t.direction == 'credit' %}+{% else %}-{% endif %}₹{{ '{:,.2f}'.format(t.amount) }}
-              </strong></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--text-3)">{{ t.reference }}</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:.78rem">#{{ t.user_id }}</td>
+              <td><span class="txn-type-badge txn-type-{{ t.txn_type }}">{{ t.txn_type.upper() }}</span></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;color:{% if t.direction=='credit' %}var(--green){% else %}var(--red){% endif %}">
+                {% if t.direction == 'credit' %}+{% else %}−{% endif %}₹{{ '{:,.2f}'.format(t.amount) }}
+              </td>
+              <td>
+                {% if t.direction == 'credit' %}
+                  <span class="status-badge status-green">↑ Credit</span>
+                {% else %}
+                  <span class="status-badge status-red">↓ Debit</span>
+                {% endif %}
+              </td>
             </tr>
             {% else %}
-            <tr><td colspan="4">No transactions found.</td></tr>
+            <tr><td colspan="5" class="empty-state">No transactions found.</td></tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
     </div>
-    
+
   </div>
 </div>
 {% endblock %}

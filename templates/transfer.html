@@ -24,7 +24,7 @@
           <button type="button" class="ttype-tab" onclick="setType('upi',this)">&#128241; UPI</button>
         </div>
 
-        <form method="POST" action="{{ url_for('transfer') }}" novalidate>
+        <form method="POST" action="{{ url_for('user.transfer') }}" novalidate>
             {{ form.hidden_tag() }}
           <input type="hidden" name="txn_type" id="txnTypeInput" value="neft"/>
 

@@ -69,11 +69,11 @@
       {% if txns.pages > 1 %}
       <div class="pagination-row">
         {% if txns.has_prev %}
-          <a href="{{ url_for('transactions', page=txns.prev_num) }}" class="page-btn">← Prev</a>
+          <a href="{{ url_for('user.transactions', page=txns.prev_num) }}" class="page-btn">← Prev</a>
         {% endif %}
         <span class="page-info">Page {{ txns.page }} of {{ txns.pages }}</span>
         {% if txns.has_next %}
-          <a href="{{ url_for('transactions', page=txns.next_num) }}" class="page-btn">Next →</a>
+          <a href="{{ url_for('user.transactions', page=txns.next_num) }}" class="page-btn">Next →</a>
         {% endif %}
       </div>
       {% endif %}

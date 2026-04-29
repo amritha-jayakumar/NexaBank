@@ -11,7 +11,7 @@
         <h2 class="dash-welcome">Good {{ 'morning' if now_hour<12 else ('afternoon' if now_hour<17 else 'evening') }}, {{ current_user.first_name }} 👋</h2>
         <p class="dash-date">{{ now.strftime('%A, %d %B %Y') }}</p>
       </div>
-      <a href="{{ url_for('transfer') }}" class="btn-quick-transfer"><svg viewBox="0 0 24 24" width="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Quick Transfer</a>
+      <a href="{{ url_for('user.transfer') }}" class="btn-quick-transfer"><svg viewBox="0 0 24 24" width="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Quick Transfer</a>
     </div>
 
     <!-- Balance + info + quick actions -->
@@ -35,12 +35,12 @@
       <div class="dash-card quick-card">
         <div class="dc-label">Quick Actions</div>
         <div class="quick-grid">
-          <a href="{{ url_for('transfer') }}?type=upi"   class="quick-btn"><span>📱</span>UPI</a>
-          <a href="{{ url_for('transfer') }}?type=neft"  class="quick-btn"><span>🏦</span>NEFT</a>
-          <a href="{{ url_for('open_fd') }}"             class="quick-btn"><span>🏛️</span>Open FD</a>
-          <a href="{{ url_for('download_statement') }}"  class="quick-btn"><span>⬇️</span>Statement</a>
-          <a href="{{ url_for('beneficiaries') }}"       class="quick-btn"><span>👥</span>Payees</a>
-          <a href="{{ url_for('new_ticket') }}"          class="quick-btn"><span>💬</span>Support</a>
+          <a href="{{ url_for('user.transfer') }}?type=upi"   class="quick-btn"><span>📱</span>UPI</a>
+          <a href="{{ url_for('user.transfer') }}?type=neft"  class="quick-btn"><span>🏦</span>NEFT</a>
+          <a href="{{ url_for('user.open_fd') }}"             class="quick-btn"><span>🏛️</span>Open FD</a>
+          <a href="{{ url_for('user.download_statement') }}"  class="quick-btn"><span>⬇️</span>Statement</a>
+          <a href="{{ url_for('user.beneficiaries') }}"       class="quick-btn"><span>👥</span>Payees</a>
+          <a href="{{ url_for('user.support') }}"          class="quick-btn"><span>💬</span>Support</a>
         </div>
       </div>
     </div>
@@ -50,7 +50,7 @@
     <div class="section-card" style="margin-bottom:1.5rem">
       <div class="section-card-header">
         <h3>Active Fixed Deposits</h3>
-        <a href="{{ url_for('fixed_deposits') }}" class="link-see-all">View All →</a>
+        <a href="{{ url_for('user.fixed_deposits') }}" class="link-see-all">View All →</a>
       </div>
       <div style="padding:.5rem 0">
         {% for fd in fds %}
@@ -103,8 +103,8 @@
       <div class="section-card-header">
         <h3>Recent Transactions</h3>
         <div style="display:flex;gap:.8rem;align-items:center">
-          <a href="{{ url_for('download_statement') }}" class="link-see-all">⬇ Download</a>
-          <a href="{{ url_for('transactions') }}" class="link-see-all">View All →</a>
+          <a href="{{ url_for('user.download_statement') }}" class="link-see-all">⬇ Download</a>
+          <a href="{{ url_for('user.transactions') }}" class="link-see-all">View All →</a>
         </div>
       </div>
       {% if txns %}

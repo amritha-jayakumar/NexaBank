@@ -12,7 +12,7 @@
         <h2 class="page-title">Fixed Deposits</h2>
         <p class="page-sub">Grow your savings with guaranteed returns up to 8.25% p.a.</p>
       </div>
-      <a href="{{ url_for('open_fd') }}" class="btn-quick-transfer">+ Open New FD</a>
+      <a href="{{ url_for('user.open_fd') }}" class="btn-quick-transfer">+ Open New FD</a>
     </div>
 
     <!-- Interest Rate Cards -->
@@ -38,7 +38,7 @@
           <div class="fd-rate-ex">
             ₹1L → ₹{{ '{:,.0f}'.format(100000 * (1 + (rate/100) * (months/12))) }}
           </div>
-          <a href="{{ url_for('open_fd') }}" class="fd-rate-btn">Invest Now</a>
+          <a href="{{ url_for('user.open_fd') }}" class="fd-rate-btn">Invest Now</a>
         </div>
         {% endfor %}
       </div>
@@ -97,7 +97,7 @@
         <div class="fd-empty-icon">🏛️</div>
         <h4>No Fixed Deposits Yet</h4>
         <p>Start earning guaranteed returns. Open your first Fixed Deposit in seconds.</p>
-        <a href="{{ url_for('open_fd') }}" class="btn-quick-transfer" style="margin-top:1rem;display:inline-flex">+ Open Your First FD</a>
+        <a href="{{ url_for('user.open_fd') }}" class="btn-quick-transfer" style="margin-top:1rem;display:inline-flex">+ Open Your First FD</a>
       </div>
       {% endif %}
     </div>

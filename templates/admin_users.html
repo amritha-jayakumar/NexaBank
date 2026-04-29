@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}User Management — Admin{% endblock %}
+{% block body_class %}page-app{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include '_admin_sidebar.html' %}
+
+  <div class="app-main">
+
+    <!-- Page Header -->
+    <div class="page-header-row" style="margin-bottom:1.8rem">
+      <div>
+        <h2 class="page-title">👥 User Management</h2>
+        <p class="page-sub">View, manage, block, and remove registered customers from the system</p>
+      </div>
+      <div style="display:flex;gap:.8rem;align-items:center">
+        <form method="GET" action="{{ url_for('admin.admin_users') }}" style="display:flex;gap:.5rem">
+          <input type="text" name="search" value="{{ search }}" placeholder="Search name or email…"
+                 style="padding:.5rem 1rem;border:1.5px solid var(--border);border-radius:8px;font-family:'Sora',sans-serif;font-size:.84rem;color:var(--text);outline:none;transition:.2s;min-width:220px"
+                 onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          <button type="submit"
+                  style="padding:.5rem 1.1rem;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer">
+            🔍 Search
+          </button>
+          {% if search %}
+          <a href="{{ url_for('admin.admin_users') }}"
+             style="padding:.5rem 1rem;background:#f4f6fb;border:1px solid var(--border);border-radius:8px;font-size:.84rem;color:var(--text-2);display:flex;align-items:center">
+            ✕ Clear
+          </a>
+          {% endif %}
+        </form>
+        <a href="{{ url_for('admin.admin_dashboard') }}"
+           style="padding:.5rem 1.1rem;background:#f4f6fb;border:1px solid var(--border);border-radius:8px;font-size:.84rem;color:var(--text-2);font-weight:600;display:flex;align-items:center;gap:.4rem">
+          ← Dashboard
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="admin-stats-bar" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon asc-blue">👤</div>
+        <div>
+          <div class="admin-stat-val">{{ users|length }}</div>
+          <div class="admin-stat-label">Total Shown</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon asc-green">✅</div>
+        <div>
+          <div class="admin-stat-val">{{ users|selectattr('is_active_acc')|list|length }}</div>
+          <div class="admin-stat-label">Active Users</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon asc-red">🚫</div>
+        <div>
+          <div class="admin-stat-val">{{ users|rejectattr('is_active_acc')|list|length }}</div>
+          <div class="admin-stat-label">Blocked Users</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="section-card">
+      <div class="section-card-header">
+        <h3>All Registered Users
+          {% if search %}
+          <span style="font-size:.75rem;font-weight:400;color:var(--text-3);margin-left:.5rem">
+            — results for "{{ search }}"
+          </span>
+          {% endif %}
+        </h3>
+        <span style="font-size:.78rem;color:var(--text-3)">{{ users|length }} record(s)</span>
+      </div>
+
+      <div class="statement-table-wrap">
+        <table class="statement-table" style="min-width:860px">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Email</th>
+              <th>Account No.</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr class="admin-user-row">
+              <!-- ID -->
+              <td style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-3)">#{{ u.id }}</td>
+
+              <!-- User name + avatar -->
+              <td>
+                <div class="user-name-cell">
+                  <div class="user-mini-avatar
+                    {% if u.role == 'super_admin' %}super-av
+                    {% elif u.role == 'admin' %}admin-av
+                    {% endif %}">
+                    {{ u.first_name[0] }}{{ u.full_name.split()[-1][0] if u.full_name.split()|length > 1 else '' }}
+                  </div>
+                  <div>
+                    <div class="user-full-name">{{ u.full_name }}</div>
+                    <div class="user-acc-no">Joined {{ u.created_at.strftime('%d %b %Y') if u.created_at else '—' }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Email -->
+              <td style="font-size:.84rem;color:var(--text-2)">{{ u.email }}</td>
+
+              <!-- Account No -->
+              <td>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;background:#f4f6fb;padding:.2rem .6rem;border-radius:5px;border:1px solid var(--border)">
+                  {{ u.masked_account }}
+                </span>
+              </td>
+
+              <!-- Role badge -->
+              <td>
+                {% if u.role == 'super_admin' %}
+                  <span class="status-badge status-purple">⚡ Super Admin</span>
+                {% elif u.role == 'admin' %}
+                  <span class="status-badge status-red">🛡️ Admin</span>
+                {% else %}
+                  <span class="status-badge status-blue">👤 Customer</span>
+                {% endif %}
+              </td>
+
+              <!-- Status badge -->
+              <td>
+                {% if not u.is_active_acc %}
+                  <span class="status-badge status-red">🚫 Blocked</span>
+                {% elif u.is_locked %}
+                  <span class="status-badge status-amber">🔒 Locked</span>
+                {% else %}
+                  <span class="status-badge status-green">● Active</span>
+                {% endif %}
+              </td>
+
+              <!-- Actions -->
+              <td>
+                <div class="action-cell">
+                  {% if u.role != 'admin' and u.role != 'super_admin' %}
+                    <!-- Block / Unblock -->
+                    <form action="{{ url_for('admin.block_user', id=u.id) }}" method="POST" style="display:inline">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      {% if u.is_active_acc %}
+                        <button type="submit" class="btn-admin-action btn-action-block"
+                                onclick="return confirm('Block {{ u.full_name }}? They will not be able to log in.')">
+                          🚫 Block
+                        </button>
+                      {% else %}
+                        <button type="submit" class="btn-admin-action btn-action-unblock">
+                          ✅ Unblock
+                        </button>
+                      {% endif %}
+                    </form>
+                    <!-- Delete -->
+                    <form action="{{ url_for('admin.delete_user', id=u.id) }}" method="POST" style="display:inline">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      <button type="submit" class="btn-admin-action btn-action-delete"
+                              onclick="return confirm('Permanently delete {{ u.full_name }}? This cannot be undone.')">
+                        🗑️ Delete
+                      </button>
+                    </form>
+
+                  {% elif current_user.role == 'super_admin' and u.id != current_user.id %}
+                    <!-- Super admin can delete other admins -->
+                    <form action="{{ url_for('admin.delete_user', id=u.id) }}" method="POST" style="display:inline">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      <button type="submit" class="btn-admin-action btn-action-delete"
+                              onclick="return confirm('Delete administrator {{ u.full_name }}? Are you absolutely sure?')">
+                        🗑️ Delete Admin
+                      </button>
+                    </form>
+
+                  {% else %}
+                    <button class="btn-admin-action btn-action-protected" disabled title="Protected account">
+                      🔐 Protected
+                    </button>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="7" style="text-align:center;padding:3rem;color:var(--text-3)">
+                <div style="font-size:2rem;margin-bottom:.5rem">🔍</div>
+                <div style="font-weight:600;margin-bottom:.3rem">No users found</div>
+                {% if search %}<div style="font-size:.82rem">No results match "{{ search }}"</div>{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;font-size:.78rem;color:var(--text-3);padding:.5rem 0">
+      <span>Legend:</span>
+      <span class="status-badge status-green">● Active</span>
+      <span class="status-badge status-amber">🔒 Locked</span>
+      <span class="status-badge status-red">🚫 Blocked</span>
+      <span class="status-badge status-blue">👤 Customer</span>
+      <span class="status-badge status-red">🛡️ Admin</span>
+      <span class="status-badge status-purple">⚡ Super Admin</span>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

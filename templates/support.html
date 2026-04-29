@@ -7,9 +7,12 @@
   <div class="app-main">
     <div class="page-header-row">
       <div><h2 class="page-title">💬 Support Center</h2><p class="page-sub">Raise and track your support requests</p></div>
-      <a href="{{ url_for('new_ticket') }}" class="btn-quick-transfer">+ New Ticket</a>
+      <a href="#new-ticket" class="btn-quick-transfer">+ New Ticket</a>
     </div>
-    <div class="section-card">
+
+    <!-- Ticket list -->
+    <div class="section-card" style="margin-bottom:1.5rem">
+      <div class="section-card-header"><h3>My Tickets</h3></div>
       {% if tickets %}
       <div class="statement-table-wrap">
         <table class="statement-table">
@@ -17,10 +20,18 @@
           <tbody>
             {% for t in tickets %}
             <tr>
-              <td class="mono">{{ t.ticket_no }}</td>
-              <td>{{ t.subject }}</td>
+              <td class="mono" style="font-size:.78rem">{{ t.ticket_no }}</td>
+              <td style="font-size:.85rem">{{ t.subject }}</td>
               <td><span class="txn-type-badge txn-type-upi">{{ t.category.upper() }}</span></td>
-              <td><span class="attempt-badge badge-{{ 'success' if t.status=='resolved' else 'fail' if t.status=='open' else 'success' }}">{{ t.status.upper() }}</span></td>
+              <td>
+                {% if t.status == 'resolved' %}
+                  <span class="status-badge status-green">✓ Resolved</span>
+                {% elif t.status == 'in_progress' %}
+                  <span class="status-badge status-amber">⏳ In Progress</span>
+                {% else %}
+                  <span class="status-badge status-blue">○ Open</span>
+                {% endif %}
+              </td>
               <td class="td-date">{{ t.created_at.strftime('%d %b %Y') }}</td>
             </tr>
             {% endfor %}
@@ -28,9 +39,39 @@
         </table>
       </div>
       {% else %}
-      <div class="empty-state" style="padding:3rem">💬 No support tickets raised yet.</div>
+      <div class="empty-state" style="padding:2rem">💬 No support tickets raised yet.</div>
       {% endif %}
     </div>
+
+    <!-- New ticket form -->
+    <div class="section-card" id="new-ticket">
+      <div class="section-card-header"><h3>+ Raise New Ticket</h3></div>
+      <form method="POST" action="{{ url_for('user.support') }}" style="padding:1.5rem">
+        {{ form.hidden_tag() }}
+        <div class="form-row-2">
+          <div class="form-field">
+            <label>Category</label>
+            <select name="category" class="form-input filter-select" style="width:100%">
+              <option value="general">General Query</option>
+              <option value="transaction">Transaction Issue</option>
+              <option value="account">Account Problem</option>
+              <option value="card">Card Issue</option>
+              <option value="fraud">Fraud / Unauthorized Access</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Subject</label>
+            <input type="text" name="subject" class="form-input" placeholder="Brief description" required/>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Message</label>
+          <textarea name="message" class="form-input" rows="4" placeholder="Describe your issue in detail..." required style="resize:vertical"></textarea>
+        </div>
+        <button type="submit" class="btn-submit" style="max-width:220px">📨 Submit Ticket</button>
+      </form>
+    </div>
+
   </div>
 </div>
 {% endblock %}

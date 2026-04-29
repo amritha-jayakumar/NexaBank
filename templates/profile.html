@@ -82,9 +82,9 @@
       </div>
 
     <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap">
-          <a href="{{ url_for('change_password') }}" class="btn-change-pw">🔐 Change Password</a>
-          <a href="{{ url_for('security_log') }}" class="btn-change-pw" style="background:#fff3e0;color:#e65100;border-color:#e65100">🛡️ Security Log</a>
-          <a href="{{ url_for('notifications') }}" class="btn-change-pw" style="background:#e8f5e9;color:#1e8449;border-color:#1e8449">🔔 Notifications</a>
+          <a href="{{ url_for('user.change_password') }}" class="btn-change-pw">🔐 Change Password</a>
+          <a href="{{ url_for('user.security_log') }}" class="btn-change-pw" style="background:#fff3e0;color:#e65100;border-color:#e65100">🛡️ Security Log</a>
+          <a href="{{ url_for('user.notifications') }}" class="btn-change-pw" style="background:#e8f5e9;color:#1e8449;border-color:#1e8449">🔔 Notifications</a>
         </div>
       </div>
     </div><!-- /profile-layout -->

@@ -17,13 +17,13 @@
 {% for n in notifs %}{% if not n.is_read %}{% set unread_count.val = unread_count.val + 1 %}{% endif %}{% endfor %}
 <header class="topbar">
   <div class="topbar-inner">
-    <a href="{{ url_for('dashboard') }}" class="topbar-brand">
+    <a href="{{ url_for('user.dashboard') }}" class="topbar-brand">
       <span class="brand-hexagon">N</span>
       <span class="brand-name">Nexa<strong>Bank</strong></span>
     </a>
 
     <div class="topbar-right">
-      <a href="{{ url_for('notifications') }}" class="notif-btn">
+      <a href="{{ url_for('user.notifications') }}" class="notif-btn">
         <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         {% if unread_count.val > 0 %}<span class="notif-badge">{{ unread_count.val }}</span>{% endif %}
       </a>
@@ -34,7 +34,7 @@
           <span class="user-acc">{{ current_user.masked_account }}</span>
         </div>
       </div>
-      <a href="{{ url_for('logout') }}" class="btn-logout">
+      <a href="{{ url_for('auth.logout') }}" class="btn-logout">
         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout
       </a>
     </div>

@@ -7,7 +7,7 @@
 <!-- ═══ NAVBAR ═══ -->
 <nav class="home-nav">
   <div class="home-nav-inner">
-    <a href="{{ url_for('index') }}" class="home-nav-brand">
+    <a href="{{ url_for('auth.index') }}" class="home-nav-brand">
       <span class="brand-hexagon">N</span>
       <span class="brand-name">Nexa<strong>Bank</strong></span>
     </a>
@@ -18,8 +18,8 @@
       <a href="#rates">FD Rates</a>
     </div>
     <div class="home-nav-actions">
-      <a href="{{ url_for('login') }}"  class="nav-btn-outline">Login</a>
-      <a href="{{ url_for('signup') }}" class="nav-btn-solid">Open Account</a>
+      <a href="{{ url_for('auth.login') }}"  class="nav-btn-outline">Login</a>
+      <a href="{{ url_for('auth.signup') }}" class="nav-btn-solid">Open Account</a>
     </div>
   </div>
 </nav>
@@ -39,11 +39,11 @@
         NEFT · IMPS · UPI · Fixed Deposits — all in one secure place.
       </p>
       <div class="hero-btns">
-        <a href="{{ url_for('signup') }}" class="btn-hero-cta">
+        <a href="{{ url_for('auth.signup') }}" class="btn-hero-cta">
           Open Free Account
           <svg viewBox="0 0 24 24" width="18"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
-        <a href="{{ url_for('login') }}" class="btn-hero-ghost">Login to NetBanking</a>
+        <a href="{{ url_for('auth.login') }}" class="btn-hero-ghost">Login to NetBanking</a>
       </div>
       <div class="hero-stats">
         <div class="hstat"><div class="hstat-num">₹2.4L Cr</div><div class="hstat-label">Total Deposits</div></div>
@@ -176,7 +176,7 @@
       </div>
     </div>
     <div style="text-align:center;margin-top:2.5rem">
-      <a href="{{ url_for('signup') }}" class="btn-hero-cta">Get Started Free →</a>
+      <a href="{{ url_for('auth.signup') }}" class="btn-hero-cta">Get Started Free →</a>
     </div>
   </div>
 </section>
@@ -207,11 +207,11 @@
       <table class="rate-table">
         <thead><tr><th>Tenure</th><th>Interest Rate (p.a.)</th><th>₹1 Lakh Becomes</th><th>Action</th></tr></thead>
         <tbody>
-          <tr><td>3 Months</td><td class="rate-val">6.50%</td><td>₹1,01,625</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
-          <tr><td>6 Months</td><td class="rate-val">7.00%</td><td>₹1,03,500</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
-          <tr class="rate-highlight"><td>12 Months ⭐</td><td class="rate-val">7.50%</td><td>₹1,07,500</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
-          <tr><td>24 Months</td><td class="rate-val">8.00%</td><td>₹1,16,000</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
-          <tr><td>36 Months</td><td class="rate-val">8.25%</td><td>₹1,24,750</td><td><a href="{{ url_for('signup') }}" class="btn-rate">Open FD</a></td></tr>
+          <tr><td>3 Months</td><td class="rate-val">6.50%</td><td>₹1,01,625</td><td><a href="{{ url_for('auth.signup') }}" class="btn-rate">Open FD</a></td></tr>
+          <tr><td>6 Months</td><td class="rate-val">7.00%</td><td>₹1,03,500</td><td><a href="{{ url_for('auth.signup') }}" class="btn-rate">Open FD</a></td></tr>
+          <tr class="rate-highlight"><td>12 Months ⭐</td><td class="rate-val">7.50%</td><td>₹1,07,500</td><td><a href="{{ url_for('auth.signup') }}" class="btn-rate">Open FD</a></td></tr>
+          <tr><td>24 Months</td><td class="rate-val">8.00%</td><td>₹1,16,000</td><td><a href="{{ url_for('auth.signup') }}" class="btn-rate">Open FD</a></td></tr>
+          <tr><td>36 Months</td><td class="rate-val">8.25%</td><td>₹1,24,750</td><td><a href="{{ url_for('auth.signup') }}" class="btn-rate">Open FD</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -224,8 +224,8 @@
     <h2>Ready to Experience Smarter Banking?</h2>
     <p>Join thousands of customers banking securely with NexaBank. Open your account in 2 minutes — free forever.</p>
     <div class="cta-btns">
-      <a href="{{ url_for('signup') }}" class="btn-hero-cta">Open Free Account →</a>
-      <a href="{{ url_for('login') }}"  class="btn-hero-ghost" style="border-color:rgba(255,255,255,0.4);color:#fff">Already a Customer? Login</a>
+      <a href="{{ url_for('auth.signup') }}" class="btn-hero-cta">Open Free Account →</a>
+      <a href="{{ url_for('auth.login') }}"  class="btn-hero-ghost" style="border-color:rgba(255,255,255,0.4);color:#fff">Already a Customer? Login</a>
     </div>
   </div>
 </section>
@@ -238,7 +238,7 @@
       <span class="brand-name" style="font-size:1.1rem">Nexa<strong>Bank</strong></span>
       <p style="font-size:.8rem;color:rgba(255,255,255,0.4);margin-top:.5rem;max-width:220px">India's trusted digital banking platform. Secure, fast, always available.</p>
     </div>
-    <div class="hf-col"><h5>Banking</h5><a href="{{ url_for('signup') }}">Open Account</a><a href="{{ url_for('login') }}">NetBanking Login</a><a href="#">Mobile Banking</a></div>
+    <div class="hf-col"><h5>Banking</h5><a href="{{ url_for('auth.signup') }}">Open Account</a><a href="{{ url_for('auth.login') }}">NetBanking Login</a><a href="#">Mobile Banking</a></div>
     <div class="hf-col"><h5>Products</h5><a href="#">Savings Account</a><a href="#">Fixed Deposits</a><a href="#">UPI Payments</a></div>
     <div class="hf-col"><h5>Security</h5><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Report Fraud</a></div>
     <div class="hf-col"><h5>Contact</h5><a href="#">1800-XXX-XXXX (Toll Free)</a><a href="#">support@nexabank.in</a><a href="#">Find Branch</a></div>

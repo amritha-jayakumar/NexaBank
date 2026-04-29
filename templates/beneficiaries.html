@@ -7,7 +7,7 @@
   <div class="app-main">
     <div class="page-header-row">
       <div><h2 class="page-title">Saved Beneficiaries</h2><p class="page-sub">Manage your saved payees for faster transfers</p></div>
-      <a href="{{ url_for('add_beneficiary') }}" class="btn-quick-transfer">+ Add Beneficiary</a>
+      <a href="{{ url_for('user.beneficiaries') }}" class="btn-quick-transfer">+ Add Beneficiary</a>
     </div>
     <div class="section-card">
       {% if beneficiaries %}
@@ -23,8 +23,11 @@
             <div class="bene-ifsc mono">{{ b.ifsc }}</div>
           </div>
           <div class="bene-actions">
-            <a href="{{ url_for('transfer') }}" class="btn-bene-pay">Pay</a>
-            <a href="{{ url_for('delete_beneficiary', bid=b.id) }}" class="btn-bene-del" onclick="return confirm('Remove {{ b.name }}?')">✕</a>
+            <a href="{{ url_for('user.transfer') }}" class="btn-bene-pay">Pay</a>
+            <form action="{{ url_for('user.delete_beneficiary', bid=b.id) }}" method="POST" style="display:inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button type="submit" class="btn-bene-del" onclick="return confirm('Remove {{ b.name }}?')">✕</button>
+            </form>
           </div>
         </div>
         {% endfor %}
@@ -32,7 +35,7 @@
       {% else %}
       <div class="empty-state" style="padding:3rem">
         <p>👥 No beneficiaries saved yet.</p>
-        <a href="{{ url_for('add_beneficiary') }}" class="btn-quick-transfer" style="margin-top:1rem;display:inline-flex">+ Add Your First Beneficiary</a>
+        <a href="{{ url_for('user.beneficiaries') }}" class="btn-quick-transfer" style="margin-top:1rem;display:inline-flex">+ Add Your First Beneficiary</a>
       </div>
       {% endif %}
     </div>

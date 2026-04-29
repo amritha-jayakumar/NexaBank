@@ -7,7 +7,7 @@
 
   <!-- Left branding panel -->
   <div class="auth-left">
-    <a href="{{ url_for('index') }}" class="auth-brand">
+    <a href="{{ url_for('auth.index') }}" class="auth-brand">
       <span class="brand-hexagon lg">N</span>
       <span class="brand-name lg">Nexa<strong>Bank</strong></span>
     </a>
@@ -26,7 +26,7 @@
       <p class="acb-text">Your password is <strong>hashed using pbkdf2:sha256</strong> before storage. The original password is <em>mathematically irrecoverable</em> from the database.</p>
     </div>
 
-    <p class="auth-left-new">Already a customer? <a href="{{ url_for('login') }}">Login to NetBanking →</a></p>
+    <p class="auth-left-new">Already a customer? <a href="{{ url_for('auth.login') }}">Login to NetBanking →</a></p>
   </div>
 
   <!-- Right form panel -->

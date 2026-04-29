@@ -7,7 +7,7 @@
 
   <!-- Left branding panel -->
   <div class="auth-left">
-    <a href="{{ url_for('index') }}" class="auth-brand">
+    <a href="{{ url_for('auth.index') }}" class="auth-brand">
       <span class="brand-hexagon lg">N</span>
       <span class="brand-name lg">Nexa<strong>Bank</strong></span>
     </a>
@@ -38,7 +38,7 @@
       <p class="acb-text"><strong>Who you are</strong> — Your email + password prove your identity. The system checks your hashed credentials in the database.</p>
     </div>
 
-    <p class="auth-left-new">New to NexaBank? <a href="{{ url_for('signup') }}">Open a free account →</a></p>
+    <p class="auth-left-new">New to NexaBank? <a href="{{ url_for('auth.signup') }}">Open a free account →</a></p>
   </div>
 
   <!-- Right form panel -->

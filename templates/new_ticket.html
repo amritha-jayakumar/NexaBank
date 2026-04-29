@@ -21,7 +21,7 @@
       <div class="form-field"><label>Message</label><textarea name="message" class="form-input" rows="5" placeholder="Describe your issue in detail..." required style="resize:vertical"></textarea></div>
       <button type="submit" class="btn-submit">📨 Submit Ticket</button>
     </form>
-    <div class="auth-card-footer"><p><a href="{{ url_for('support') }}" style="color:#1a73e8">← Back to Support</a></p></div>
+    <div class="auth-card-footer"><p><a href="{{ url_for('user.support') }}" style="color:#1a73e8">← Back to Support</a></p></div>
   </div>
 </div>
 {% endblock %}

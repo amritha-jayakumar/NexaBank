@@ -5,10 +5,10 @@
 <div class="app-layout">
   {% include '_sidebar.html' %}
   <div class="app-main">
-    <div class="page-header-row"><div><h2 class="page-title">🔔 Notifications</h2><p class="page-sub">{{ notifs|length }} total notifications</p></div></div>
+    <div class="page-header-row"><div><h2 class="page-title">🔔 Notifications</h2><p class="page-sub">{{ notifications|length }} total notifications</p></div></div>
     <div class="section-card">
-      {% if notifs %}
-      {% for n in notifs %}
+      {% if notifications %}
+      {% for n in notifications %}
       <div class="notif-item notif-{{ n.notif_type }} {% if not n.is_read %}unread{% endif %}">
         <div class="notif-dot"></div>
         <div class="notif-body">

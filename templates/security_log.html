@@ -54,8 +54,8 @@
             </tr>
           </thead>
           <tbody>
-            {% if attempts %}
-              {% for a in attempts %}
+            {% if logs %}
+              {% for a in logs %}
               <tr>
                 <td class="td-date">
                   {{ a.created_at.strftime('%d %b %Y') }}<br/>
@@ -63,7 +63,7 @@
                 </td>
                 <td>
                   <span class="attempt-badge {% if a.success %}badge-success{% else %}badge-fail{% endif %}">
-                    {% if a.success %}&#10003; Success{% else %}&#10005; Failed{% endif %}
+                    {% if a.success %}✓ Success{% else %}✕ Failed{% endif %}
                   </span>
                 </td>
                 <td class="mono" style="font-size:.8rem">{{ a.ip_address }}</td>
