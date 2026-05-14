@@ -18,8 +18,8 @@ def dashboard():
     unread = db.session.execute(db.select(db.func.count(Notification.id)).filter_by(user_id=current_user.id, is_read=False)).scalar()
     fds    = db.session.execute(db.select(FixedDeposit).filter_by(user_id=current_user.id, status='active')).scalars().all()
     from sqlalchemy import func
-    debits = db.session.execute(db.select(Transaction.txn_type, func.sum(Transaction.amount))\
-               .filter_by(user_id=current_user.id, direction='debit').group_by(Transaction.txn_type)).all()
+    debits = db.session.query(Transaction.txn_type, func.sum(Transaction.amount))\
+               .filter_by(user_id=current_user.id, direction='debit').group_by(Transaction.txn_type).all()
     spend_data = {t: round(a, 2) for t, a in debits}
     now = datetime.now(timezone.utc).replace(tzinfo=None)
     total_fd = sum([fd.principal for fd in fds])
