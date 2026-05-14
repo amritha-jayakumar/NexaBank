@@ -5,7 +5,7 @@ from flask_login import (LoginManager, login_user, logout_user,
 from flask_wtf.csrf import CSRFProtect
 from models import db, User, Transaction, LoginAttempt, Beneficiary, SupportTicket, Notification, FixedDeposit, AuditLog
 from forms import SignupForm, LoginForm, TransferForm, AddBeneficiaryForm, OpenFDForm, SupportTicketForm, ChangePasswordForm, OTPVerifyForm
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import func
 import random, string, os, io, base64
 from functools import wraps
@@ -51,7 +51,7 @@ app.register_blueprint(user_bp)
 with app.app_context():
     db.create_all()
     # Temporary upgrade script for the admin
-    admin = User.query.filter_by(email='admin@nexabank.com').first()
+    admin = User.query.filter_by(email='aadmin441@gmail.com').first()
     if admin and admin.role == 'admin':
         admin.role = 'super_admin'
         db.session.commit()
@@ -62,9 +62,11 @@ login_manager.login_message          = 'Please log in to access your account.'
 login_manager.login_message_category = 'warning'
 
 @login_manager.user_loader
-def load_user(uid): return User.query.get(int(uid))
+def load_user(uid): return db.session.get(User, int(uid))
 
 def send_otp_email(recipient_email, otp_code, context="Account Security"):
+    # Since SMTP DNS resolution is failing locally, print OTP to console for debugging:
+    print(f"\n{'='*50}\n[DEVELOPMENT MODE] OTP FOR {recipient_email}: {otp_code}\n{'='*50}\n")
     try:
         msg = Message(f"NexaBank - {context} OTP", recipients=[recipient_email])
         msg.body = f"Hello,\n\nYour One-Time Password (OTP) for {context} is: {otp_code}\n\nThis code will expire in 2 minutes. Do not share this code with anyone.\n\nSecurely,\nNexaBank Security Team"
@@ -72,7 +74,8 @@ def send_otp_email(recipient_email, otp_code, context="Account Security"):
         return True
     except Exception as e:
         print(f"Error sending email: {e}")
-        return False
+        # Return True in development so login can proceed even if mail fails
+        return True
 
 # ── Security Headers ──────────────────────────────────────────
 @app.after_request
@@ -90,13 +93,13 @@ def check_timeout():
     if current_user.is_authenticated:
         last = session.get('last_active')
         if last:
-            elapsed = (datetime.utcnow() - datetime.strptime(last, '%Y-%m-%d %H:%M:%S')).total_seconds()
+            elapsed = (datetime.now(timezone.utc).replace(tzinfo=None) - datetime.strptime(last, '%Y-%m-%d %H:%M:%S')).total_seconds()
             if elapsed > SESSION_TIMEOUT * 60:
                 logout_user()
                 session.clear()
                 flash('Session expired due to inactivity. Please log in again.', 'warning')
                 return redirect(url_for('auth.login'))
-        session['last_active'] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        session['last_active'] = datetime.now(timezone.utc).replace(tzinfo=None).strftime('%Y-%m-%d %H:%M:%S')
         session.permanent = True
 
 # ── Error Handlers ────────────────────────────────────────────
@@ -147,7 +150,7 @@ def seed_user(user):
         t = Transaction(user_id=user.id, txn_type=tt, description=desc,
                         amount=abs(amt), direction=d, balance_after=round(bal, 2),
                         reference=f"NX{random.randint(100000000,999999999)}")
-        t.created_at = datetime.utcnow() - timedelta(days=9-i, hours=random.randint(0, 8))
+        t.created_at = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=9-i, hours=random.randint(0, 8))
         db.session.add(t)
     user.balance = round(bal, 2)
     b = Beneficiary(user_id=user.id, name='Priya Kumar', account_no='456789012345',

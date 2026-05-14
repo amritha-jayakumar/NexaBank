@@ -5,8 +5,11 @@ New: Beneficiary, SupportTicket, Notification, FixedDeposit
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timezone
 import random, string, bcrypt
+
+def get_utcnow():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 db = SQLAlchemy()
 
@@ -27,7 +30,7 @@ class User(UserMixin, db.Model):
     is_locked       = db.Column(db.Boolean,  default=False)
     locked_until    = db.Column(db.DateTime, nullable=True)
     is_active_acc   = db.Column(db.Boolean,  default=True)
-    created_at      = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at      = db.Column(db.DateTime, default=get_utcnow)
     last_login      = db.Column(db.DateTime, nullable=True)
 
     transactions  = db.relationship('Transaction',  backref='user', lazy=True, order_by='Transaction.created_at.desc()')
@@ -67,7 +70,7 @@ class Transaction(db.Model):
     direction     = db.Column(db.String(6),   nullable=False)
     balance_after = db.Column(db.Float,       nullable=False)
     reference     = db.Column(db.String(30),  nullable=False)
-    created_at    = db.Column(db.DateTime,    default=datetime.utcnow)
+    created_at    = db.Column(db.DateTime,    default=get_utcnow)
     @property
     def txn_icon(self):
         return {'salary_credit':'💰','neft':'🏦','upi':'📱','imps':'⚡','atm':'🏧','fd':'🏛️'}.get(self.txn_type,'💳')
@@ -82,7 +85,7 @@ class Beneficiary(db.Model):
     ifsc        = db.Column(db.String(15), nullable=False)
     bank_name   = db.Column(db.String(60), nullable=False)
     nickname    = db.Column(db.String(50), default='')
-    created_at  = db.Column(db.DateTime,  default=datetime.utcnow)
+    created_at  = db.Column(db.DateTime,  default=get_utcnow)
 
 
 class SupportTicket(db.Model):
@@ -94,7 +97,7 @@ class SupportTicket(db.Model):
     category    = db.Column(db.String(50), default='general')
     status      = db.Column(db.String(20), default='open')
     ticket_no   = db.Column(db.String(15), nullable=False)
-    created_at  = db.Column(db.DateTime,  default=datetime.utcnow)
+    created_at  = db.Column(db.DateTime,  default=get_utcnow)
     @property
     def status_color(self):
         return {'open':'blue','in_progress':'amber','resolved':'green','closed':'gray'}.get(self.status,'blue')
@@ -108,7 +111,7 @@ class Notification(db.Model):
     message     = db.Column(db.Text,       nullable=False)
     notif_type  = db.Column(db.String(30), default='info')
     is_read     = db.Column(db.Boolean,    default=False)
-    created_at  = db.Column(db.DateTime,  default=datetime.utcnow)
+    created_at  = db.Column(db.DateTime,  default=get_utcnow)
 
 
 class FixedDeposit(db.Model):
@@ -120,12 +123,12 @@ class FixedDeposit(db.Model):
     interest_rate = db.Column(db.Float,    nullable=False)
     tenure_months = db.Column(db.Integer,  nullable=False)
     maturity_amt  = db.Column(db.Float,    nullable=False)
-    start_date    = db.Column(db.DateTime, default=datetime.utcnow)
+    start_date    = db.Column(db.DateTime, default=get_utcnow)
     maturity_date = db.Column(db.DateTime, nullable=False)
     status        = db.Column(db.String(20),default='active')
     @property
     def days_remaining(self):
-        delta = self.maturity_date - datetime.utcnow()
+        delta = self.maturity_date - get_utcnow()
         return max(0, delta.days)
 
 
@@ -136,14 +139,14 @@ class LoginAttempt(db.Model):
     ip_address = db.Column(db.String(50), nullable=False)
     success    = db.Column(db.Boolean,    nullable=False)
     reason     = db.Column(db.String(50), default='')
-    created_at = db.Column(db.DateTime,  default=datetime.utcnow)
+    created_at = db.Column(db.DateTime,  default=get_utcnow)
     @property
     def status_label(self):
-        return {'login_success':'✅ Login Success','password_ok_awaiting_otp':'🔐 Password OK',
-                'wrong_password':'❌ Wrong Password','wrong_otp':'❌ Wrong OTP',
-                'account_locked':'🔒 Account Locked','account_locked_now':'🔒 Account Locked',
-                'otp_brute_force':'⚠️ OTP Brute Force','user_not_found':'❓ User Not Found',
-                'logout':'👋 Logged Out'}.get(self.reason, self.reason)
+        return {'login_success':'Login Success','password_ok_awaiting_otp':'Password OK',
+                'wrong_password':'Wrong Password','wrong_otp':'Wrong OTP',
+                'account_locked':'Account Locked','account_locked_now':'Account Locked',
+                'otp_brute_force':'OTP Brute Force','user_not_found':'User Not Found',
+                'logout':'Logged Out'}.get(self.reason, self.reason)
 
 class AuditLog(db.Model):
     __tablename__ = 'audit_logs'
@@ -153,6 +156,6 @@ class AuditLog(db.Model):
     action      = db.Column(db.String(100),nullable=False)
     details     = db.Column(db.String(255),nullable=True)
     ip_address  = db.Column(db.String(50), nullable=False)
-    created_at  = db.Column(db.DateTime,  default=datetime.utcnow)
+    created_at  = db.Column(db.DateTime,  default=get_utcnow)
     
     admin       = db.relationship('User', foreign_keys=[admin_id])

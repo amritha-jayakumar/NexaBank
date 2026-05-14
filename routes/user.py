@@ -3,7 +3,7 @@ from flask_login import login_required, logout_user, current_user
 from models import db, User, Transaction, Beneficiary, SupportTicket, Notification, FixedDeposit, LoginAttempt
 from forms import TransferForm, AddBeneficiaryForm, OpenFDForm, SupportTicketForm, ChangePasswordForm, OTPVerifyForm
 from utils.security import user_required
-from datetime import datetime
+from datetime import datetime, timezone
 import random
 import csv
 import io
@@ -14,14 +14,14 @@ user_bp = Blueprint('user', __name__)
 @login_required
 @user_required
 def dashboard():
-    txns   = Transaction.query.filter_by(user_id=current_user.id).order_by(Transaction.created_at.desc()).limit(5).all()
-    unread = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
-    fds    = FixedDeposit.query.filter_by(user_id=current_user.id, status='active').all()
+    txns   = db.session.execute(db.select(Transaction).filter_by(user_id=current_user.id).order_by(Transaction.created_at.desc()).limit(5)).scalars().all()
+    unread = db.session.execute(db.select(db.func.count(Notification.id)).filter_by(user_id=current_user.id, is_read=False)).scalar()
+    fds    = db.session.execute(db.select(FixedDeposit).filter_by(user_id=current_user.id, status='active')).scalars().all()
     from sqlalchemy import func
-    debits = db.session.query(Transaction.txn_type, func.sum(Transaction.amount))\
-               .filter_by(user_id=current_user.id, direction='debit').group_by(Transaction.txn_type).all()
+    debits = db.session.execute(db.select(Transaction.txn_type, func.sum(Transaction.amount))\
+               .filter_by(user_id=current_user.id, direction='debit').group_by(Transaction.txn_type)).all()
     spend_data = {t: round(a, 2) for t, a in debits}
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     total_fd = sum([fd.principal for fd in fds])
     return render_template('dashboard.html', user=current_user, txns=txns,
                            unread=unread, fds=fds, total_fd=total_fd, spend_data=spend_data,
@@ -32,14 +32,14 @@ def dashboard():
 @user_required
 def transactions():
     page = request.args.get('page', 1, type=int)
-    txns = Transaction.query.filter_by(user_id=current_user.id).order_by(Transaction.created_at.desc()).paginate(page=page, per_page=10)
+    txns = db.paginate(db.select(Transaction).filter_by(user_id=current_user.id).order_by(Transaction.created_at.desc()), page=page, per_page=10)
     return render_template('transactions.html', user=current_user, txns=txns)
 
 @user_bp.route('/download-statement')
 @login_required
 @user_required
 def download_statement():
-    txns = Transaction.query.filter_by(user_id=current_user.id).order_by(Transaction.created_at.desc()).all()
+    txns = db.session.execute(db.select(Transaction).filter_by(user_id=current_user.id).order_by(Transaction.created_at.desc())).scalars().all()
     si = io.StringIO()
     cw = csv.writer(si)
     cw.writerow(['Date', 'Reference', 'Description', 'Type', 'Direction', 'Amount', 'Balance After'])
@@ -57,7 +57,7 @@ def download_statement():
 @login_required
 @user_required
 def transfer():
-    beneficiaries = Beneficiary.query.filter_by(user_id=current_user.id).all()
+    beneficiaries = db.session.execute(db.select(Beneficiary).filter_by(user_id=current_user.id)).scalars().all()
     form = TransferForm()
     
     if form.validate_on_submit():
@@ -76,7 +76,7 @@ def transfer():
             }
             otp = str(random.randint(100000, 999999))
             session['transfer_otp'] = otp
-            session['transfer_otp_time'] = datetime.utcnow().timestamp()
+            session['transfer_otp_time'] = datetime.now(timezone.utc).replace(tzinfo=None).timestamp()
             
             print(f"\n[DEV MODE] 💸 TRANSFER OTP for {current_user.email}: {otp}\n")
             
@@ -96,7 +96,7 @@ def verify_transfer():
         return redirect(url_for('user.transfer'))
         
     otp_time = session.get('transfer_otp_time', 0)
-    remaining_time = max(0, int(120 - (datetime.utcnow().timestamp() - otp_time)))
+    remaining_time = max(0, int(120 - (datetime.now(timezone.utc).replace(tzinfo=None).timestamp() - otp_time)))
     
     if remaining_time <= 0:
         flash('Transfer OTP expired.', 'danger')
@@ -143,7 +143,7 @@ def verify_transfer():
 @login_required
 @user_required
 def beneficiaries():
-    bens = Beneficiary.query.filter_by(user_id=current_user.id).all()
+    bens = db.session.execute(db.select(Beneficiary).filter_by(user_id=current_user.id)).scalars().all()
     form = AddBeneficiaryForm()
     if form.validate_on_submit():
         b = Beneficiary(user_id=current_user.id, name=form.name.data.strip(),
@@ -162,7 +162,10 @@ def beneficiaries():
 @login_required
 @user_required
 def delete_beneficiary(bid):
-    b = Beneficiary.query.filter_by(id=bid, user_id=current_user.id).first_or_404()
+    b = db.session.execute(db.select(Beneficiary).filter_by(id=bid, user_id=current_user.id)).scalar_one_or_none()
+    if not b:
+        flash('Beneficiary not found.', 'danger')
+        return redirect(url_for('user.beneficiaries'))
     db.session.delete(b)
     db.session.commit()
     flash(f'Beneficiary "{b.name}" removed.', 'success')
@@ -172,7 +175,7 @@ def delete_beneficiary(bid):
 @login_required
 @user_required
 def fixed_deposits():
-    fds = FixedDeposit.query.filter_by(user_id=current_user.id).all()
+    fds = db.session.execute(db.select(FixedDeposit).filter_by(user_id=current_user.id)).scalars().all()
     return render_template('fixed_deposits.html', user=current_user, fds=fds)
 
 @user_bp.route('/open-fd', methods=['GET', 'POST'])
@@ -193,7 +196,7 @@ def open_fd():
             rate_map = {3: 6.5, 6: 7.0, 12: 7.5, 24: 8.0, 36: 8.25}
             rate = rate_map.get(m, 7.0)
             mat_amt = round(amt + (amt * rate * (m / 12)) / 100, 2)
-            maturity_date = datetime.utcnow() + timedelta(days=m * 30)
+            maturity_date = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=m * 30)
             fd_num = f"FD{random.randint(10000000, 99999999)}"
             fd = FixedDeposit(
                 user_id=current_user.id,
@@ -223,7 +226,7 @@ def open_fd():
 @login_required
 @user_required
 def notifications():
-    notifs = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.created_at.desc()).limit(30).all()
+    notifs = db.session.execute(db.select(Notification).filter_by(user_id=current_user.id).order_by(Notification.created_at.desc()).limit(30)).scalars().all()
     for n in notifs:
         n.is_read = True
     db.session.commit()
@@ -233,7 +236,7 @@ def notifications():
 @login_required
 @user_required
 def support():
-    tickets = SupportTicket.query.filter_by(user_id=current_user.id).order_by(SupportTicket.created_at.desc()).all()
+    tickets = db.session.execute(db.select(SupportTicket).filter_by(user_id=current_user.id).order_by(SupportTicket.created_at.desc())).scalars().all()
     form = SupportTicketForm()
     if form.validate_on_submit():
         ticket_no = f"TKT{random.randint(1000000, 9999999)}"
@@ -254,7 +257,7 @@ def support():
 @login_required
 @user_required
 def security_log():
-    logs = LoginAttempt.query.filter_by(email=current_user.email).order_by(LoginAttempt.created_at.desc()).limit(20).all()
+    logs = db.session.execute(db.select(LoginAttempt).filter_by(email=current_user.email).order_by(LoginAttempt.created_at.desc()).limit(20)).scalars().all()
     return render_template('security_log.html', logs=logs)
 
 @user_bp.route('/profile')

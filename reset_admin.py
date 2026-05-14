@@ -2,12 +2,12 @@ from app import app, db
 from models import User
 
 with app.app_context():
-    admin = User.query.filter_by(email="admin@nexabank.com").first()
+    admin = db.session.execute(db.select(User).filter_by(email="aadmin441@gmail.com")).scalar_one_or_none()
     if not admin:
         print("Admin user not found. Creating one...")
         admin = User(
             full_name="System Administrator",
-            email="admin@nexabank.com",
+            email="aadmin441@gmail.com",
             phone="0000000000",
             account_no=User.generate_account_no(),
             role="super_admin",
@@ -23,4 +23,4 @@ with app.app_context():
     
     admin.set_password("AdminSecurePass123!")
     db.session.commit()
-    print("Success! You can now log in with email: admin@nexabank.com and password: AdminSecurePass123!")
+    print("Success! You can now log in with email: aadmin441@gmail.com and password: AdminSecurePass123!")

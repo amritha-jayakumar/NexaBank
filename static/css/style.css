@@ -326,7 +326,7 @@ svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-lin
 .link-see-all{font-size:.8rem;color:var(--blue)}
 
 /* Transactions */
-.txn-list{}
+
 .txn-row{display:flex;align-items:center;gap:1rem;padding:.9rem 1.3rem;border-bottom:1px solid var(--border);transition:background .15s}
 .txn-row:last-child{border:none}
 .txn-row:hover{background:#f8f9fc}
@@ -594,6 +594,7 @@ svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-lin
   height: 100%;
   background: linear-gradient(90deg, var(--green), #60d394);
   border-radius: 3px; transition: width .6s ease;
+  width: var(--progress, 0%);
 }
 .fd-days-left {
   font-size: .72rem; color: var(--text-3);
@@ -786,4 +787,8 @@ svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-lin
 .user-full-name { font-size: .86rem; font-weight: 600; color: var(--text); }
 .user-acc-no    { font-size: .71rem; color: var(--text-3); font-family: 'JetBrains Mono', monospace; margin-top: .1rem; }
 .action-cell    { display: flex; gap: .4rem; flex-wrap: wrap; }
+/* Utilities */
+.credit-color { color: var(--green) !important; }
+.debit-color { color: var(--red) !important; }
+.mono { font-family: 'JetBrains Mono', monospace; }
 

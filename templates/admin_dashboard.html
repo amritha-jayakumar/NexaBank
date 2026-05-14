@@ -10,40 +10,52 @@
     <!-- Header -->
     <div class="dash-greeting-row">
       <div>
-        <h2 class="dash-welcome">🛡️ Admin Control Panel</h2>
+        <h2 class="dash-welcome">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Admin Control Panel
+        </h2>
         <p class="dash-date">System-wide monitoring and access control</p>
       </div>
       <a href="{{ url_for('admin.admin_users') }}"
          style="display:flex;align-items:center;gap:.5rem;padding:.6rem 1.2rem;background:var(--blue);color:#fff;border-radius:8px;font-size:.85rem;font-weight:600">
-        👥 Manage Users
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Manage Users
       </a>
     </div>
 
     <!-- Stats Bar -->
     <div class="admin-stats-bar">
       <div class="admin-stat-card">
-        <div class="admin-stat-icon asc-blue">👥</div>
+        <div class="admin-stat-icon asc-blue">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
         <div>
           <div class="admin-stat-val">{{ stats.total }}</div>
           <div class="admin-stat-label">Total Users</div>
         </div>
       </div>
       <div class="admin-stat-card">
-        <div class="admin-stat-icon asc-green">✅</div>
+        <div class="admin-stat-icon asc-green">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+        </div>
         <div>
           <div class="admin-stat-val">{{ stats.active }}</div>
           <div class="admin-stat-label">Active Users</div>
         </div>
       </div>
       <div class="admin-stat-card">
-        <div class="admin-stat-icon asc-red">🚫</div>
+        <div class="admin-stat-icon asc-red">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="18" y1="8" x2="23" y2="13"></line><line x1="23" y1="8" x2="18" y2="13"></line></svg>
+        </div>
         <div>
           <div class="admin-stat-val">{{ stats.blocked }}</div>
           <div class="admin-stat-label">Blocked Users</div>
         </div>
       </div>
       <div class="admin-stat-card">
-        <div class="admin-stat-icon asc-amber">📋</div>
+        <div class="admin-stat-icon asc-amber">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
         <div>
           <div class="admin-stat-val">{{ logs|length }}</div>
           <div class="admin-stat-label">Audit Logs</div>
@@ -55,7 +67,7 @@
     <div class="section-card" style="margin-bottom:1.5rem">
       <div class="section-card-header">
         <h3>Registered Users</h3>
-        <a href="{{ url_for('admin.admin_users') }}" class="link-see-all">View All & Manage →</a>
+        <a href="{{ url_for('admin.admin_users') }}" class="link-see-all">View All &amp; Manage →</a>
       </div>
       <div class="statement-table-wrap">
         <table class="statement-table">
@@ -83,20 +95,20 @@
               <td style="font-size:.84rem;color:var(--text-2)">{{ u.email }}</td>
               <td>
                 {% if u.role == 'super_admin' %}
-                  <span class="status-badge status-purple">⚡ Super Admin</span>
+                  <span class="status-badge status-purple">Super Admin</span>
                 {% elif u.role == 'admin' %}
-                  <span class="status-badge status-red">🛡️ Admin</span>
+                  <span class="status-badge status-red">Admin</span>
                 {% else %}
-                  <span class="status-badge status-blue">👤 Customer</span>
+                  <span class="status-badge status-blue">Customer</span>
                 {% endif %}
               </td>
               <td>
                 {% if not u.is_active_acc %}
-                  <span class="status-badge status-red">🚫 Blocked</span>
+                  <span class="status-badge status-red">Blocked</span>
                 {% elif u.is_locked %}
-                  <span class="status-badge status-amber">🔒 Locked</span>
+                  <span class="status-badge status-amber">Locked</span>
                 {% else %}
-                  <span class="status-badge status-green">● Active</span>
+                  <span class="status-badge status-green">Active</span>
                 {% endif %}
               </td>
             </tr>
@@ -109,13 +121,16 @@
     <!-- Audit Logs -->
     <div class="section-card" style="margin-bottom:1.5rem">
       <div class="section-card-header">
-        <h3>📋 System Audit Logs</h3>
+        <h3 style="display:flex;align-items:center;gap:8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          System Audit Logs
+        </h3>
       </div>
       <div class="statement-table-wrap">
         <table class="statement-table">
           <thead>
             <tr>
-              <th>Date & Time</th>
+              <th>Date &amp; Time</th>
               <th>Admin ID</th>
               <th>Action</th>
               <th>Details</th>
@@ -142,7 +157,10 @@
     <!-- Recent Global Transactions -->
     <div class="section-card">
       <div class="section-card-header">
-        <h3>💳 Recent Global Transactions</h3>
+        <h3 style="display:flex;align-items:center;gap:8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          Recent Global Transactions
+        </h3>
       </div>
       <div class="statement-table-wrap">
         <table class="statement-table">
@@ -161,7 +179,7 @@
               <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--text-3)">{{ t.reference }}</td>
               <td style="font-family:'JetBrains Mono',monospace;font-size:.78rem">#{{ t.user_id }}</td>
               <td><span class="txn-type-badge txn-type-{{ t.txn_type }}">{{ t.txn_type.upper() }}</span></td>
-              <td style="font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;color:{% if t.direction=='credit' %}var(--green){% else %}var(--red){% endif %}">
+              <td class="mono {{ 'credit-color' if t.direction == 'credit' else 'debit-color' }}" style="font-size:.85rem;font-weight:700">
                 {% if t.direction == 'credit' %}+{% else %}−{% endif %}₹{{ '{:,.2f}'.format(t.amount) }}
               </td>
               <td>

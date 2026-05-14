@@ -4,10 +4,10 @@ from models import User
 
 def create_admin():
     with app.app_context():
-        email = "admin@nexabank.com"
+        email = "aadmin441@gmail.com"
         # Check if admin already exists
-        if User.query.filter_by(email=email).first():
-            print("Admin user already exists. Email: admin@nexabank.com")
+        if db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none():
+            print("Admin user already exists. Email: aadmin441@gmail.com")
             return
 
         admin_user = User(
@@ -23,7 +23,7 @@ def create_admin():
         
         db.session.add(admin_user)
         db.session.commit()
-        print("Admin user created successfully! Email: admin@nexabank.com | Password: AdminSecurePass123!")
+        print("Admin user created successfully! Email: aadmin441@gmail.com | Password: AdminSecurePass123!")
 
 if __name__ == '__main__':
     create_admin()

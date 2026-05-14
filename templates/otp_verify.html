@@ -35,7 +35,7 @@
 
 {% if remaining_time is defined %}
 <script>
-  let otpTimeLeft = {{ remaining_time }};
+  let otpTimeLeft = Number("{{ remaining_time | default(0) }}");
   const otpTimeDisplay = document.getElementById('otp-timer-display');
   
   function updateOtpTimer() {

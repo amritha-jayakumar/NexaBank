@@ -82,7 +82,7 @@
                   {% set total_days = fd.tenure_months * 30 %}
                   {% set elapsed = total_days - fd.days_remaining %}
                   {% set pct = ((elapsed / total_days) * 100)|round(0)|int if total_days > 0 else 0 %}
-                  <div class="fd-progress-bar"><div class="fd-progress-fill" style="width:{{ pct }}%"></div></div>
+                  <div class="fd-progress-bar"><div class="fd-progress-fill" style="--progress: {{ pct }}%"></div></div>
                   <span class="fd-days-left">{{ fd.days_remaining }} days left</span>
                 </div>
               </td>

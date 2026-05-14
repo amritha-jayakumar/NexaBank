@@ -9,15 +9,15 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 @login_required
 @admin_required
 def admin_dashboard():
-    users = User.query.all()
-    txns = Transaction.query.order_by(Transaction.created_at.desc()).limit(20).all()
-    logs = AuditLog.query.order_by(AuditLog.created_at.desc()).limit(10).all()
-    login_logs = LoginAttempt.query.order_by(LoginAttempt.created_at.desc()).limit(10).all()
+    users = db.session.execute(db.select(User)).scalars().all()
+    txns = db.session.execute(db.select(Transaction).order_by(Transaction.created_at.desc()).limit(20)).scalars().all()
+    logs = db.session.execute(db.select(AuditLog).order_by(AuditLog.created_at.desc()).limit(10)).scalars().all()
+    login_logs = db.session.execute(db.select(LoginAttempt).order_by(LoginAttempt.created_at.desc()).limit(10)).scalars().all()
     
     stats = {
-        'total': User.query.count(),
-        'active': User.query.filter_by(is_active_acc=True).count(),
-        'blocked': User.query.filter_by(is_active_acc=False).count()
+        'total': db.session.execute(db.select(db.func.count(User.id))).scalar(),
+        'active': db.session.execute(db.select(db.func.count(User.id)).filter_by(is_active_acc=True)).scalar(),
+        'blocked': db.session.execute(db.select(db.func.count(User.id)).filter_by(is_active_acc=False)).scalar()
     }
     return render_template('admin_dashboard.html', users=users, txns=txns, logs=logs, login_logs=login_logs, stats=stats)
 
@@ -27,19 +27,19 @@ def admin_dashboard():
 def admin_users():
     search = request.args.get('search', '')
     if search:
-        users = User.query.filter(
+        users = db.session.execute(db.select(User).filter(
             (User.full_name.ilike(f'%{search}%')) | 
             (User.email.ilike(f'%{search}%'))
-        ).all()
+        )).scalars().all()
     else:
-        users = User.query.all()
+        users = db.session.execute(db.select(User)).scalars().all()
     return render_template('admin_users.html', users=users, search=search)
 
 @admin_bp.route('/block/<int:id>', methods=['POST'])
 @login_required
 @admin_required
 def block_user(id):
-    user = User.query.get_or_404(id)
+    user = db.get_or_404(User, id)
     if user.role in ['admin', 'super_admin'] and current_user.role != 'super_admin':
         flash('Cannot modify administrator accounts without super admin access.', 'danger')
         return redirect(url_for('admin.admin_users'))
@@ -60,7 +60,7 @@ def block_user(id):
 @login_required
 @admin_required
 def delete_user(id):
-    user_to_delete = User.query.get_or_404(id)
+    user_to_delete = db.get_or_404(User, id)
     
     if user_to_delete.role in ['admin', 'super_admin'] and current_user.role != 'super_admin':
         flash('Cannot delete an administrator account without super admin privileges.', 'danger')
@@ -75,12 +75,12 @@ def delete_user(id):
     uid = user_to_delete.id
 
     # Delete ALL related records first to avoid FK constraint errors
-    Transaction.query.filter_by(user_id=uid).delete()
-    Beneficiary.query.filter_by(user_id=uid).delete()
-    SupportTicket.query.filter_by(user_id=uid).delete()
-    Notification.query.filter_by(user_id=uid).delete()
-    FixedDeposit.query.filter_by(user_id=uid).delete()
-    LoginAttempt.query.filter_by(email=email).delete()
+    db.session.execute(db.delete(Transaction).filter_by(user_id=uid))
+    db.session.execute(db.delete(Beneficiary).filter_by(user_id=uid))
+    db.session.execute(db.delete(SupportTicket).filter_by(user_id=uid))
+    db.session.execute(db.delete(Notification).filter_by(user_id=uid))
+    db.session.execute(db.delete(FixedDeposit).filter_by(user_id=uid))
+    db.session.execute(db.delete(LoginAttempt).filter_by(email=email))
 
     db.session.delete(user_to_delete)
     db.session.commit()

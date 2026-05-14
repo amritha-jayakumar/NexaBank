@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, current_user
 from models import db, User, LoginAttempt
 from forms import SignupForm, LoginForm, OTPVerifyForm
 from utils.security import get_ip, log_admin_action
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import random
 
 auth_bp = Blueprint('auth', __name__)
@@ -45,7 +45,7 @@ def signup():
         
     form = SignupForm()
     if form.validate_on_submit():
-        if User.query.filter_by(email=form.email.data.lower()).first():
+        if db.session.execute(db.select(User).filter_by(email=form.email.data.lower())).scalar_one_or_none():
             flash('An account with this email already exists.', 'danger')
             return render_template('signup.html', form=form)
         user = User(
@@ -76,12 +76,13 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data.lower().strip()
-        user  = User.query.filter_by(email=email).first()
+        user  = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
 
         # Check lockout
         if user and user.is_locked:
-            if datetime.utcnow() < (user.locked_until or datetime.utcnow()):
-                mins = int(((user.locked_until or datetime.utcnow()) - datetime.utcnow()).total_seconds() // 60) + 1
+            now = datetime.now(timezone.utc).replace(tzinfo=None)
+            if now < (user.locked_until or now):
+                mins = int(((user.locked_until or now) - now).total_seconds() // 60) + 1
                 flash(f'Account locked due to multiple failed attempts. Try again in {mins} minute(s).', 'danger')
                 return render_template('login.html', form=form)
             else:
@@ -99,16 +100,12 @@ def login():
             user.failed_attempts = 0
             db.session.commit()
             
-            if user.role in ['admin', 'super_admin']:
-                otp = '123456'
-                print(f"\n[DEV MODE - ADMIN] 🔐 DUMMY LOGIN OTP for {user.email}: {otp}\n")
-            else:
-                otp = str(random.randint(100000, 999999))
-                print(f"\n[DEV MODE] 🔐 LOGIN OTP for {user.email}: {otp}\n")
+            otp = str(random.randint(100000, 999999))
+            print(f"\n[DEV MODE] 🔐 LOGIN OTP for {user.email}: {otp}\n")
                 
             session['login_pending_user_id'] = user.id
             session['login_otp'] = otp
-            session['login_otp_time'] = datetime.utcnow().timestamp()
+            session['login_otp_time'] = datetime.now(timezone.utc).replace(tzinfo=None).timestamp()
             session['login_remember'] = form.remember.data
             
             from app import send_otp_email
@@ -121,7 +118,7 @@ def login():
                 user.failed_attempts = (user.failed_attempts or 0) + 1
                 if user.failed_attempts >= MAX_LOGIN_ATTEMPTS:
                     user.is_locked    = True
-                    user.locked_until = datetime.utcnow() + timedelta(minutes=LOCKOUT_MINUTES)
+                    user.locked_until = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(minutes=LOCKOUT_MINUTES)
                     db.session.commit()
                     log_attempt(email, False, 'account_locked_now')
                     flash(f'Account locked for {LOCKOUT_MINUTES} minutes due to too many failed attempts.', 'danger')
@@ -148,7 +145,7 @@ def verify_login():
         return redirect(url_for('auth.login'))
         
     otp_time = session.get('login_otp_time', 0)
-    current_time = datetime.utcnow().timestamp()
+    current_time = datetime.now(timezone.utc).replace(tzinfo=None).timestamp()
     remaining_time = max(0, int(120 - (current_time - otp_time)))
     
     if remaining_time <= 0:
@@ -162,13 +159,13 @@ def verify_login():
     form = OTPVerifyForm()
     if form.validate_on_submit():
         if form.otp.data.strip() == session.get('login_otp'):
-            user = User.query.get(user_id)
-            user.last_login = datetime.utcnow()
+            user = db.session.get(User, user_id)
+            user.last_login = datetime.now(timezone.utc).replace(tzinfo=None)
             db.session.commit()
             
             login_user(user, remember=session.get('login_remember', False))
             session.permanent = True
-            session['last_active'] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+            session['last_active'] = datetime.now(timezone.utc).replace(tzinfo=None).strftime('%Y-%m-%d %H:%M:%S')
             
             session.pop('login_pending_user_id', None)
             session.pop('login_otp', None)
@@ -179,7 +176,7 @@ def verify_login():
             
             from app import add_notif
             add_notif(user.id, 'New Login Detected 🔐',
-                      f'Login from IP {get_ip()} at {datetime.utcnow().strftime("%d %b %Y %I:%M %p")}', 'info')
+                      f'Login from IP {get_ip()} at {datetime.now(timezone.utc).replace(tzinfo=None).strftime("%d %b %Y %I:%M %p")}', 'info')
                       
             # ADD ADMIN LOGIN AUDIT LOG HERE
             if user.role in ['admin', 'super_admin']:
